@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smoke Free</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --border: #1e1e1e;
+    --accent: #c8f560;
+    --accent-dim: #8aaa3a;
+    --text: #e8e8e8;
+    --muted: #555;
+    --danger: #ff4444;
+    --smoke: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  header { text-align: center; margin-bottom: 48px; animation: fadeDown 0.6s ease both; }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 10vw, 80px);
+    letter-spacing: 6px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .tagline {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 100%;
+    max-width: 480px;
+    padding: 32px;
+    position: relative;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* Setup */
+  .setup-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .setup-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 2;
+    margin-bottom: 24px;
+  }
+
+  .setup-desc a { color: var(--accent-dim); text-decoration: none; }
+  .setup-desc a:hover { color: var(--accent); }
+  .setup-desc strong { color: #aaa; }
+
+  .step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--accent);
+    min-width: 20px;
+    line-height: 1.4;
+  }
+
+  .step-text { font-size: 11px; color: var(--muted); line-height: 1.8; }
+  .step-text a { color: var(--accent-dim); text-decoration: none; }
+  .step-text a:hover { color: var(--accent); }
+
+  .input-group { display: flex; flex-direction: column; gap: 6px; margin: 20px 0 16px; }
+
+  .input-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+
+  .input-field {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .input-field:focus { border-color: var(--accent-dim); }
+  .input-field::placeholder { color: var(--muted); }
+
+  .setup-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #0d0d0d;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.2s;
+  }
+  .setup-btn:hover { opacity: 0.85; }
+  .setup-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .setup-error { font-size: 11px; color: var(--danger); margin-top: 10px; min-height: 16px; }
+
+  /* Main app */
+  .app { width: 100%; max-width: 480px; display: none; flex-direction: column; }
+
+  .watch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 100%;
+    padding: 40px 32px 32px;
+    text-align: center;
+    position: relative;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+
+  .watch-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .label-sm { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+
+  .timer-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 18vw, 100px);
+    letter-spacing: 4px;
+    line-height: 1;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(200, 245, 96, 0.2);
+  }
+
+  .timer-display.long { font-size: clamp(40px, 12vw, 64px); }
+
+  .timer-sub { font-size: 11px; letter-spacing: 2px; color: var(--muted); margin-top: 8px; text-transform: uppercase; }
+
+  .since-row {
+    display: flex; justify-content: center; gap: 6px; align-items: center;
+    margin-top: 20px; font-size: 11px; color: var(--muted); letter-spacing: 1px;
+  }
+
+  .since-row span.date { color: var(--smoke); font-weight: 500; }
+
+  .smoked-btn {
+    margin-top: 32px;
+    width: 100%;
+    padding: 18px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .smoked-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateY(100%);
+    transition: transform 0.2s ease;
+    z-index: 0;
+  }
+
+  .smoked-btn span { position: relative; z-index: 1; }
+  .smoked-btn:hover::after { transform: translateY(0); }
+  .smoked-btn:hover { color: #0d0d0d; }
+  .smoked-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .saving-indicator {
+    font-size: 10px; letter-spacing: 2px; color: var(--muted);
+    text-align: center; margin-top: 10px; min-height: 14px; text-transform: uppercase;
+  }
+
+  .log-section { width: 100%; margin-top: 32px; animation: fadeUp 0.7s ease 0.2s both; }
+
+  .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 2px; }
+  .log-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+
+  .clear-btn {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--danger); background: none; border: none; cursor: pointer;
+    font-family: 'DM Mono', monospace; opacity: 0.6; transition: opacity 0.2s;
+  }
+  .clear-btn:hover { opacity: 1; }
+
+  .log-list { display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; }
+
+  .log-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .log-item:first-child { border-color: var(--accent-dim); }
+  .log-num { font-size: 10px; color: var(--muted); letter-spacing: 1px; min-width: 28px; }
+  .log-duration { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); }
+  .log-duration.best { color: #60f5a0; }
+  .log-date { font-size: 10px; color: var(--muted); text-align: right; line-height: 1.5; }
+
+  .empty-state {
+    text-align: center; padding: 32px; color: var(--muted); font-size: 12px;
+    letter-spacing: 2px; text-transform: uppercase; border: 1px dashed var(--border); border-radius: 2px;
+  }
+
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+
+  .stat-box { background: var(--surface); border: 1px solid var(--border); padding: 16px; border-radius: 2px; text-align: center; }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--text); }
+  .stat-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+  /* Modal */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .overlay.active { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    padding: 32px; max-width: 360px; width: 90%; text-align: center;
+    transform: scale(0.95); transition: transform 0.2s;
+  }
+  .overlay.active .modal { transform: scale(1); }
+  .modal-icon { font-size: 36px; margin-bottom: 12px; }
+  .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--accent); margin-bottom: 8px; }
+  .modal p { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+  .modal-time { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--text); }
+  .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .btn-confirm {
+    padding: 14px; background: var(--accent); color: #0d0d0d; border: none;
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px;
+    cursor: pointer; border-radius: 2px; transition: opacity 0.2s;
+  }
+  .btn-confirm:hover { opacity: 0.85; }
+
+  .btn-cancel {
+    padding: 14px; background: transparent; color: var(--muted); border: 1px solid var(--border);
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px;
+    cursor: pointer; border-radius: 2px; transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--smoke); color: var(--text); }
+
+  .share-btn {
+    margin-top: 12px;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .share-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
+
+  .readonly-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: #1a2a0a;
+    color: var(--accent-dim);
+    border: 1px solid var(--accent-dim);
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  .readonly-notice {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 16px;
+    letter-spacing: 1px;
+    line-height: 1.8;
+  }
+
+  .readonly-notice a { color: var(--accent-dim); text-decoration: none; }
+  .readonly-notice a:hover { color: var(--accent); }
+
+  @keyframes pulse {
+    0%, 100% { text-shadow: 0 0 40px rgba(200, 245, 96, 0.2); }
+    50% { text-shadow: 0 0 80px rgba(200, 245, 96, 0.6); }
+  }
+  .timer-display.pulsing { animation: pulse 1.2s ease 3; }
+
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SMOKE FREE</div>
+  <div class="tagline">Track your resistance — one hour at a time</div>
+</header>
+
+<div class="loading-screen" id="loadingScreen">Loading...</div>
+
+<!-- Setup -->
+<div class="card" id="setupCard" style="display:none">
+  <div class="setup-title">One-time setup</div>
+  <div class="setup-desc">Your data is stored on <a href="https://jsonbin.io" target="_blank">JSONBin.io</a> — a free cloud storage service. Takes 2 minutes to set up.</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text">Go to <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> and create a free account</div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text">After logging in, click <strong>API Keys</strong> in the top menu → copy your <strong>Master Key</strong></div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text">Paste it below and hit Save</div>
+  </div>
+
+  <div class="input-group">
+    <div class="input-label">Master Key</div>
+    <input class="input-field" id="apiKeyInput" type="password" placeholder="$2a$10$..." />
+  </div>
+  <button class="setup-btn" id="setupBtn" onclick="setupApp()">Save & Start</button>
+  <div class="setup-error" id="setupError"></div>
+</div>
+
+<!-- Main App -->
+<div class="app" id="mainApp">
+  <div class="watch-card">
+    <div class="label-sm">Time since last cigarette</div>
+    <div class="timer-display" id="timerDisplay">00:00:00</div>
+    <div class="timer-sub">HH : MM : SS</div>
+    <div class="since-row">Started: <span class="date" id="sinceDate">—</span></div>
+    <button class="smoked-btn" id="smokedBtn" onclick="openModal()">
+      <span>🚬 &nbsp; I Just Smoked</span>
+    </button>
+    <div class="saving-indicator" id="savingIndicator"></div>
+    <button class="share-btn" onclick="copyShareLink()">📎 &nbsp; Copy read-only link for friends</button>
+  </div>
+
+  <div class="log-section">
+    <div class="log-header">
+      <span class="log-title">Resistance Log</span>
+      <button class="clear-btn" onclick="confirmClear()">Clear all</button>
+    </div>
+    <div class="stats-row" id="statsRow" style="display:none">
+      <div class="stat-box">
+        <div class="stat-val" id="statCount">0</div>
+        <div class="stat-lbl">Sessions logged</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="statBest">—</div>
+        <div class="stat-lbl">Personal best</div>
+      </div>
+    </div>
+    <div style="margin-top:10px"><div id="logList"></div></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-icon">🚬</div>
+    <h2>Log a smoke?</h2>
+    <p>This will record your resistance time and reset the stopwatch.</p>
+    <div class="modal-time" id="modalTime"></div>
+    <br>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="logSmoke()">Log it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BIN_API  = 'https://api.jsonbin.io/v3/b';
+  const LS_KEY   = 'sf_apikey';
+  const LS_BIN   = 'sf_binid';
+  const READ_KEY = '$2a$10$2sHMjPBPGrPDjYi3bBkVDeTvKM9CjGNRQFi/vABHlsPDYGqKd5Oky'; // public read-only key for JSONBin
+
+  let _apiKey  = null;
+  let _binId   = null;
+  let _state   = { start: null, log: [] };
+  let _pendingLog = null;
+  let _saving  = false;
+  let _readOnly = false;
+
+  // ── JSONBin helpers ──
+  async function createBin(key) {
+    const r = await fetch(BIN_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'smokefree', 'X-Bin-Private': 'false' },
+      body: JSON.stringify({ start: Date.now(), log: [] })
+    });
+    if (!r.ok) throw new Error(r.status);
+    return (await r.json()).metadata.id;
+  }
+
+  async function readBin(binId, apiKey) {
+    const id  = binId  !== undefined ? binId  : _binId;
+    const key = apiKey !== undefined ? apiKey : _apiKey;
+    const headers = key ? { 'X-Master-Key': key } : {};
+    const r = await fetch(`${BIN_API}/${id}/latest`, { headers });
+    if (!r.ok) throw new Error(r.status);
+    return (await r.json()).record;
+  }
+
+  async function writeBin(state) {
+    const r = await fetch(`${BIN_API}/${_binId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': _apiKey },
+      body: JSON.stringify(state)
+    });
+    if (!r.ok) throw new Error(r.status);
+  }
+
+  // ── LocalStorage (only for credentials) ──
+  function lsGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
+
+  // ── Format helpers ──
+  function fmtDuration(ms, short = false) {
+    const s = Math.floor(ms / 1000);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    if (short) {
+      if (h >= 24) return `${Math.floor(h/24)}d ${h%24}h ${String(m).padStart(2,'0')}m`;
+      if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
+      if (m > 0) return `${m}m ${String(sec).padStart(2,'0')}s`;
+      return `${sec}s`;
+    }
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+  }
+
+  function fmtDate(ts) {
+    return new Date(ts).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ── Timer ──
+  function tick() {
+    if (!_state.start) return;
+    const elapsed = Date.now() - _state.start;
+    const el = document.getElementById('timerDisplay');
+    const f = fmtDuration(elapsed);
+    el.textContent = f;
+    el.classList.toggle('long', f.length > 8);
+    document.getElementById('sinceDate').textContent = fmtDate(_state.start);
+  }
+
+  // ── UI ──
+  function setSaving(msg) { document.getElementById('savingIndicator').textContent = msg; }
+
+  function renderLog() {
+    const log = _state.log || [];
+    const container = document.getElementById('logList');
+    const statsRow = document.getElementById('statsRow');
+
+    if (log.length === 0) {
+      container.innerHTML = `<div class="empty-state">No sessions logged yet<br>Hit the button after your next smoke</div>`;
+      statsRow.style.display = 'none';
+      return;
+    }
+
+    statsRow.style.display = 'grid';
+    const best = Math.max(...log.map(e => (e.loggedAt || 0) - (e.start || 0)));
+    document.getElementById('statCount').textContent = log.length;
+    document.getElementById('statBest').textContent = fmtDuration(best);
+
+    container.innerHTML = '<div class="log-list">' + log.map((e, i) => {
+      const duration = (e.loggedAt || Date.now()) - (e.start || e.loggedAt);
+      const isBest = duration === best;
+      return `
+      <div class="log-item">
+        <span class="log-num">#${log.length - i}</span>
+        <span class="log-duration ${isBest ? 'best' : ''}">${fmtDuration(duration)}${isBest ? ' 🏆' : ''}</span>
+        <span class="log-date">${fmtDate(e.start)} →<br>${fmtDate(e.loggedAt)}</span>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function openModal() {
+    const elapsed = _state.start ? Date.now() - _state.start : 0;
+    _pendingLog = { start: _state.start, elapsed };
+    document.getElementById('modalTime').textContent = _state.start ? `Held for: ${fmtDuration(elapsed, true)}` : 'Starting fresh';
+    document.getElementById('overlay').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('active');
+    _pendingLog = null;
+  }
+
+  async function logSmoke() {
+    closeModal();
+    if (_saving) return;
+    _saving = true;
+    document.getElementById('smokedBtn').disabled = true;
+    setSaving('Saving...');
+
+    const { start, elapsed } = _pendingLog || { start: _state.start, elapsed: 0 };
+    if (start) _state.log.unshift({ start, elapsed, loggedAt: Date.now() });
+    _state.start = Date.now();
+
+    try {
+      await writeBin(_state);
+      setSaving('Saved ✓');
+      setTimeout(() => setSaving(''), 2000);
+    } catch {
+      setSaving('⚠ Save failed — check connection');
+    }
+
+    renderLog();
+    tick();
+
+    const d = document.getElementById('timerDisplay');
+    d.classList.remove('pulsing');
+    void d.offsetWidth;
+    d.classList.add('pulsing');
+    setTimeout(() => d.classList.remove('pulsing'), 4000);
+
+    document.getElementById('smokedBtn').disabled = false;
+    _saving = false;
+  }
+
+  async function confirmClear() {
+    if (!confirm('Clear all sessions? Timer keeps running.')) return;
+    _state.log = [];
+    setSaving('Saving...');
+    try { await writeBin(_state); setSaving('Cleared ✓'); setTimeout(() => setSaving(''), 2000); }
+    catch { setSaving('⚠ Save failed'); }
+    renderLog();
+  }
+
+  // ── Setup ──
+  async function setupApp() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    const errEl = document.getElementById('setupError');
+    const btn = document.getElementById('setupBtn');
+    if (!key) { errEl.textContent = 'Please enter your API key.'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Connecting...';
+    errEl.textContent = '';
+    try {
+      const id = await createBin(key);
+      lsSet(LS_KEY, key);
+      lsSet(LS_BIN, id);
+      _apiKey = key;
+      _binId = id;
+      launchApp();
+    } catch (e) {
+      errEl.textContent = 'Could not connect. Check your API key and try again.';
+      btn.disabled = false;
+      btn.textContent = 'Save & Start';
+    }
+  }
+
+  function copyShareLink() {
+    const url = `${location.origin}${location.pathname}?view=${_binId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setSaving('Link copied! Share it with your friend ✓');
+      setTimeout(() => setSaving(''), 3000);
+    });
+  }
+
+  async function launchReadOnly(binId) {
+    _readOnly = true;
+    _binId = binId;
+
+    document.getElementById('setupCard').style.display = 'none';
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+
+    // Hide write controls
+    document.getElementById('smokedBtn').style.display = 'none';
+    document.querySelector('.share-btn').style.display = 'none';
+    document.querySelector('.clear-btn').style.display = 'none';
+    document.getElementById('savingIndicator').style.display = 'none';
+
+    // Add readonly badge to header
+    document.querySelector('.label-sm').innerHTML = 'Time since last cigarette <span class="readonly-badge">👁 read only</span>';
+
+    // Add notice
+    const notice = document.createElement('div');
+    notice.className = 'readonly-notice';
+    notice.innerHTML = `You're viewing someone's smoke tracker in read-only mode.<br>Want to <a href="${location.origin}${location.pathname}">track your own?</a>`;
+    document.getElementById('mainApp').appendChild(notice);
+
+    try {
+      _state = await readBin(binId, null);
+      if (!_state.start) _state.start = Date.now();
+      if (!Array.isArray(_state.log)) _state.log = [];
+    } catch {
+      _state = { start: Date.now(), log: [] };
+    }
+
+    renderLog();
+    tick();
+    // Auto-refresh every 30s so friend sees live updates
+    setInterval(async () => {
+      try {
+        _state = await readBin(binId, null);
+        renderLog();
+        tick();
+      } catch {}
+    }, 30000);
+    setInterval(tick, 1000);
+  }
+
+  async function launchApp() {
+    document.getElementById('setupCard').style.display = 'none';
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+
+    try {
+      _state = await readBin();
+      if (!_state.start) _state.start = Date.now();
+      if (!Array.isArray(_state.log)) _state.log = [];
+    } catch {
+      _state = { start: Date.now(), log: [] };
+    }
+
+    renderLog();
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // ── Init ──
+  async function init() {
+    document.getElementById('loadingScreen').style.display = 'none';
+
+    const params = new URLSearchParams(location.search);
+    const viewBin = params.get('view');
+    if (viewBin) { launchReadOnly(viewBin); return; }
+
+    const key = lsGet(LS_KEY);
+    const bin = lsGet(LS_BIN);
+    if (key && bin) {
+      _apiKey = key; _binId = bin;
+      launchApp();
+    } else {
+      document.getElementById('setupCard').style.display = 'block';
+    }
+  }
+
+  init();
+  document.getElementById('overlay').addEventListener('click', e => { if (e.target === document.getElementById('overlay')) closeModal(); });
+</script>
+</body>
+</html>

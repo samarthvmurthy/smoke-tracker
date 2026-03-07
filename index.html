@@ -5,21 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smoke Free</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
 <style>
   :root {
     --bg: #080808;
     --surface: #101010;
     --surface2: #161616;
     --border: #1c1c1c;
-    --border2: #242424;
+    --border2: #282828;
     --accent: #c8f560;
     --accent-dim: #7a9938;
-    --accent-glow: rgba(200,245,96,0.15);
+    --accent-glow: rgba(200,245,96,0.12);
     --text: #e0e0e0;
-    --muted: #4a4a4a;
+    --muted: #3a3a3a;
     --muted2: #666;
     --danger: #ff4455;
+    --success: #60f5a0;
     --gold: #f5c842;
     --silver: #a0a8b0;
     --bronze: #c87832;
@@ -28,55 +29,52 @@
   * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Mono',monospace;
+    min-height:100vh;
+    overflow-x:hidden;
   }
 
-  /* Noise */
   body::after {
     content:'';
     position:fixed;
     inset:0;
-    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
     pointer-events:none;
     z-index:9998;
   }
 
-  /* ── AUTH SCREENS ── */
+  /* ── AUTH ── */
   .auth-wrap {
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:20px;
+    padding:24px;
   }
 
-  .auth-box {
-    width:100%;
-    max-width:400px;
-    animation: fadeUp 0.5s ease both;
-  }
+  .auth-box { width:100%; max-width:420px; }
 
   .auth-logo {
     font-family:'Bebas Neue',sans-serif;
-    font-size:56px;
-    letter-spacing:8px;
+    font-size:64px;
+    letter-spacing:10px;
     color:var(--accent);
     text-align:center;
     line-height:1;
-    margin-bottom:6px;
+    margin-bottom:4px;
+    animation:fadeDown 0.5s ease both;
   }
 
-  .auth-sub {
+  .auth-tagline {
     text-align:center;
     font-size:10px;
     letter-spacing:4px;
     text-transform:uppercase;
     color:var(--muted2);
     margin-bottom:40px;
+    animation:fadeDown 0.5s ease 0.1s both;
   }
 
   .auth-card {
@@ -85,6 +83,7 @@
     border-radius:4px;
     padding:32px;
     position:relative;
+    animation:fadeUp 0.5s ease 0.15s both;
   }
 
   .auth-card::before {
@@ -97,8 +96,8 @@
 
   .auth-title {
     font-family:'Bebas Neue',sans-serif;
-    font-size:24px;
-    letter-spacing:3px;
+    font-size:26px;
+    letter-spacing:4px;
     color:var(--accent);
     margin-bottom:24px;
   }
@@ -122,10 +121,11 @@
     font-size:13px;
     outline:none;
     transition:border-color 0.2s;
+    width:100%;
   }
 
   .field input:focus { border-color:var(--accent-dim); }
-  .field input::placeholder { color:var(--muted); }
+  .field input::placeholder { color:var(--muted2); opacity:0.5; }
 
   .btn-primary {
     width:100%;
@@ -138,44 +138,55 @@
     letter-spacing:3px;
     cursor:pointer;
     border-radius:2px;
-    transition:opacity 0.2s;
+    transition:opacity 0.2s, transform 0.1s;
     margin-top:8px;
   }
-  .btn-primary:hover { opacity:0.85; }
+  .btn-primary:hover { opacity:0.88; }
+  .btn-primary:active { transform:scale(0.99); }
   .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
 
-  .auth-switch {
-    text-align:center;
+  .auth-msg {
+    font-size:11px;
+    margin-top:12px;
+    min-height:18px;
+    letter-spacing:0.5px;
+    line-height:1.6;
+  }
+  .auth-msg.error { color:var(--danger); }
+  .auth-msg.success { color:var(--success); }
+
+  .auth-links {
+    display:flex;
+    justify-content:center;
+    gap:16px;
     margin-top:16px;
     font-size:11px;
     color:var(--muted2);
+    flex-wrap:wrap;
   }
 
-  .auth-switch a {
+  .auth-links a {
     color:var(--accent-dim);
     cursor:pointer;
     text-decoration:underline;
+    transition:color 0.2s;
   }
-  .auth-switch a:hover { color:var(--accent); }
+  .auth-links a:hover { color:var(--accent); }
 
-  .err-msg {
+  .divider {
+    color:var(--muted2);
     font-size:11px;
-    color:var(--danger);
-    margin-top:10px;
-    min-height:16px;
-    letter-spacing:0.5px;
   }
 
-  /* ── APP SHELL ── */
+  /* ── APP ── */
   .app { display:none; flex-direction:column; min-height:100vh; }
 
-  /* Top nav */
   .nav {
     display:flex;
     align-items:center;
     justify-content:space-between;
     padding:0 24px;
-    height:56px;
+    height:54px;
     border-bottom:1px solid var(--border);
     background:var(--surface);
     position:sticky;
@@ -185,21 +196,20 @@
 
   .nav-logo {
     font-family:'Bebas Neue',sans-serif;
-    font-size:28px;
+    font-size:26px;
     letter-spacing:5px;
     color:var(--accent);
   }
 
-  .nav-user {
+  .nav-right {
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:14px;
     font-size:11px;
     color:var(--muted2);
-    letter-spacing:1px;
   }
 
-  .nav-username { color:var(--text); font-weight:500; }
+  .nav-username { color:var(--text); letter-spacing:1px; }
 
   .btn-ghost {
     background:none;
@@ -216,12 +226,12 @@
   }
   .btn-ghost:hover { border-color:var(--muted2); color:var(--text); }
 
-  /* Tab bar */
   .tabs {
     display:flex;
     border-bottom:1px solid var(--border);
     background:var(--surface);
     padding:0 24px;
+    overflow-x:auto;
   }
 
   .tab {
@@ -232,22 +242,21 @@
     color:var(--muted2);
     cursor:pointer;
     border-bottom:2px solid transparent;
-    transition:all 0.2s;
-    background:none;
     border-top:none;
     border-left:none;
     border-right:none;
+    background:none;
     font-family:'DM Mono',monospace;
+    transition:all 0.2s;
+    white-space:nowrap;
   }
-
   .tab:hover { color:var(--text); }
   .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
-  /* Main content */
   .content {
     flex:1;
-    padding:32px 24px;
-    max-width:600px;
+    padding:28px 24px 60px;
+    max-width:580px;
     width:100%;
     margin:0 auto;
   }
@@ -255,12 +264,12 @@
   .panel { display:none; }
   .panel.active { display:block; animation:fadeUp 0.3s ease both; }
 
-  /* ── TRACKER PANEL ── */
+  /* ── TRACKER ── */
   .timer-card {
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:4px;
-    padding:40px 32px 32px;
+    padding:36px 28px 28px;
     text-align:center;
     position:relative;
     margin-bottom:24px;
@@ -284,67 +293,83 @@
 
   .timer-display {
     font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(64px,16vw,96px);
+    font-size:clamp(60px,15vw,92px);
     letter-spacing:4px;
     line-height:1;
     color:var(--accent);
     text-shadow:0 0 60px var(--accent-glow);
+    transition:color 0.3s;
+    min-height:96px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
-  .timer-display.long { font-size:clamp(40px,10vw,64px); }
+  .timer-display.stopped { color:var(--muted2); text-shadow:none; }
+  .timer-display.long { font-size:clamp(40px,10vw,60px); }
 
   .timer-since {
     font-size:11px;
     color:var(--muted2);
-    margin-top:12px;
+    margin-top:10px;
     letter-spacing:1px;
+    min-height:18px;
   }
 
-  .timer-since span { color:var(--muted2); }
+  /* Timer controls */
+  .timer-controls {
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+    margin-top:24px;
+  }
 
-  .smoked-btn {
-    margin-top:28px;
-    width:100%;
-    padding:16px;
-    background:transparent;
-    border:1px solid var(--accent);
-    color:var(--accent);
+  .ctrl-btn {
+    padding:14px 10px;
     font-family:'Bebas Neue',sans-serif;
-    font-size:20px;
-    letter-spacing:4px;
-    cursor:pointer;
+    font-size:16px;
+    letter-spacing:2px;
     border-radius:2px;
+    cursor:pointer;
+    border:none;
     transition:all 0.2s;
     position:relative;
     overflow:hidden;
   }
 
-  .smoked-btn::after {
-    content:'';
-    position:absolute;
-    inset:0;
-    background:var(--accent);
-    transform:translateY(100%);
-    transition:transform 0.2s ease;
-    z-index:0;
-  }
+  .ctrl-btn:disabled { opacity:0.35; cursor:not-allowed; }
 
-  .smoked-btn span { position:relative; z-index:1; }
-  .smoked-btn:hover::after { transform:translateY(0); }
-  .smoked-btn:hover { color:#080808; }
-  .smoked-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .btn-start {
+    background:var(--accent);
+    color:#080808;
+  }
+  .btn-start:hover:not(:disabled) { opacity:0.88; }
+
+  .btn-stop {
+    background:transparent;
+    border:1px solid var(--border2) !important;
+    color:var(--muted2);
+  }
+  .btn-stop:hover:not(:disabled) { border-color:var(--muted2) !important; color:var(--text); }
+
+  .btn-smoked {
+    background:transparent;
+    border:1px solid var(--danger) !important;
+    color:var(--danger);
+  }
+  .btn-smoked:hover:not(:disabled) { background:var(--danger); color:#080808; }
 
   .status-msg {
     font-size:10px;
     letter-spacing:2px;
     color:var(--muted2);
     text-align:center;
-    margin-top:10px;
+    margin-top:12px;
     min-height:14px;
     text-transform:uppercase;
   }
 
-  /* Log section */
+  /* ── LOG ── */
   .section-header {
     display:flex;
     justify-content:space-between;
@@ -359,6 +384,20 @@
     color:var(--muted2);
   }
 
+  .link-btn {
+    background:none;
+    border:none;
+    color:var(--muted2);
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    cursor:pointer;
+    text-decoration:underline;
+    transition:color 0.2s;
+  }
+  .link-btn:hover { color:var(--danger); }
+
   .stats-grid {
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -370,13 +409,13 @@
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:2px;
-    padding:16px;
+    padding:14px;
     text-align:center;
   }
 
   .stat-val {
     font-family:'Bebas Neue',sans-serif;
-    font-size:26px;
+    font-size:24px;
     letter-spacing:2px;
     color:var(--text);
   }
@@ -397,12 +436,12 @@
     border-radius:2px;
     padding:12px 16px;
     display:grid;
-    grid-template-columns:32px 1fr auto;
+    grid-template-columns:28px 1fr auto;
     align-items:center;
     gap:12px;
   }
 
-  .log-item.best { border-color:var(--accent-dim); }
+  .log-item.is-best { border-color:var(--accent-dim); }
 
   .log-num { font-size:10px; color:var(--muted2); letter-spacing:1px; }
 
@@ -413,13 +452,18 @@
     color:var(--accent);
   }
 
-  .log-dur.best-dur { color:#60f5a0; }
+  .log-dur.best { color:var(--success); }
 
-  .log-dates { font-size:10px; color:var(--muted2); text-align:right; line-height:1.7; }
+  .log-dates {
+    font-size:10px;
+    color:var(--muted2);
+    text-align:right;
+    line-height:1.8;
+  }
 
   .empty-state {
     text-align:center;
-    padding:32px;
+    padding:28px;
     color:var(--muted2);
     font-size:11px;
     letter-spacing:2px;
@@ -428,14 +472,14 @@
     border-radius:2px;
   }
 
-  /* ── FRIENDS PANEL ── */
-  .add-friend-row {
+  /* ── FRIENDS ── */
+  .add-row {
     display:flex;
     gap:10px;
-    margin-bottom:24px;
+    margin-bottom:8px;
   }
 
-  .add-friend-row input {
+  .add-row input {
     flex:1;
     background:#0a0a0a;
     border:1px solid var(--border2);
@@ -448,31 +492,58 @@
     transition:border-color 0.2s;
   }
 
-  .add-friend-row input:focus { border-color:var(--accent-dim); }
-  .add-friend-row input::placeholder { color:var(--muted); }
+  .add-row input:focus { border-color:var(--accent-dim); }
+  .add-row input::placeholder { color:var(--muted2); opacity:0.5; }
 
-  .btn-accent {
-    padding:10px 20px;
+  .btn-sm {
+    padding:10px 18px;
     background:var(--accent);
     color:#080808;
     border:none;
     font-family:'Bebas Neue',sans-serif;
-    font-size:16px;
+    font-size:15px;
     letter-spacing:2px;
     cursor:pointer;
     border-radius:2px;
     transition:opacity 0.2s;
     white-space:nowrap;
   }
-  .btn-accent:hover { opacity:0.85; }
-  .btn-accent:disabled { opacity:0.4; cursor:not-allowed; }
+  .btn-sm:hover { opacity:0.88; }
+  .btn-sm:disabled { opacity:0.4; cursor:not-allowed; }
+
+  .inline-msg {
+    font-size:11px;
+    min-height:16px;
+    margin-bottom:16px;
+    letter-spacing:0.5px;
+  }
+  .inline-msg.error { color:var(--danger); }
+  .inline-msg.success { color:var(--success); }
+
+  .subsection {
+    margin-bottom:28px;
+  }
+
+  .subsection-title {
+    font-size:10px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--muted2);
+    margin-bottom:12px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
 
   .friend-card {
     background:var(--surface);
     border:1px solid var(--border);
-    border-radius:4px;
-    padding:20px;
-    margin-bottom:10px;
+    border-radius:3px;
+    padding:16px 20px;
+    margin-bottom:8px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:center;
+    gap:12px;
     position:relative;
     overflow:hidden;
   }
@@ -486,24 +557,17 @@
     background:var(--accent-dim);
   }
 
-  .friend-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
-  }
-
   .friend-name {
     font-family:'Bebas Neue',sans-serif;
-    font-size:20px;
+    font-size:18px;
     letter-spacing:3px;
     color:var(--accent);
   }
 
   .friend-timer {
     font-family:'Bebas Neue',sans-serif;
-    font-size:28px;
-    letter-spacing:3px;
+    font-size:22px;
+    letter-spacing:2px;
     color:var(--text);
   }
 
@@ -511,17 +575,74 @@
     font-size:10px;
     color:var(--muted2);
     letter-spacing:1px;
-    margin-top:4px;
+    margin-top:3px;
   }
+
+  .request-card {
+    background:var(--surface);
+    border:1px solid var(--border2);
+    border-radius:3px;
+    padding:14px 20px;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+  }
+
+  .request-name {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;
+    letter-spacing:2px;
+    color:var(--text);
+  }
+
+  .request-meta {
+    font-size:10px;
+    color:var(--muted2);
+    margin-top:2px;
+    letter-spacing:1px;
+  }
+
+  .request-actions { display:flex; gap:8px; }
+
+  .btn-accept {
+    padding:7px 14px;
+    background:var(--accent);
+    color:#080808;
+    border:none;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:13px;
+    letter-spacing:2px;
+    cursor:pointer;
+    border-radius:2px;
+    transition:opacity 0.2s;
+  }
+  .btn-accept:hover { opacity:0.88; }
+
+  .btn-decline {
+    padding:7px 14px;
+    background:transparent;
+    color:var(--muted2);
+    border:1px solid var(--border2);
+    font-family:'Bebas Neue',sans-serif;
+    font-size:13px;
+    letter-spacing:2px;
+    cursor:pointer;
+    border-radius:2px;
+    transition:all 0.2s;
+  }
+  .btn-decline:hover { border-color:var(--danger); color:var(--danger); }
 
   .btn-remove {
     background:none;
     border:none;
     color:var(--muted2);
     cursor:pointer;
-    font-size:16px;
+    font-size:14px;
+    padding:4px 8px;
     transition:color 0.2s;
-    padding:4px;
+    font-family:'DM Mono',monospace;
   }
   .btn-remove:hover { color:var(--danger); }
 
@@ -533,17 +654,16 @@
     padding:16px 20px;
     margin-bottom:8px;
     display:grid;
-    grid-template-columns:40px 1fr auto;
+    grid-template-columns:44px 1fr auto;
     align-items:center;
-    gap:16px;
-    transition:border-color 0.2s;
+    gap:12px;
   }
 
-  .lb-item.me { border-color:var(--accent-dim); background:rgba(200,245,96,0.03); }
+  .lb-item.is-me { border-color:var(--accent-dim); background:rgba(200,245,96,0.02); }
 
   .lb-rank {
     font-family:'Bebas Neue',sans-serif;
-    font-size:24px;
+    font-size:26px;
     letter-spacing:2px;
     text-align:center;
   }
@@ -553,36 +673,52 @@
   .rank-3 { color:var(--bronze); }
   .rank-n { color:var(--muted2); }
 
+  .lb-info {}
+
   .lb-name {
     font-family:'Bebas Neue',sans-serif;
     font-size:18px;
     letter-spacing:2px;
     color:var(--text);
   }
-
   .lb-name.is-me { color:var(--accent); }
-  .lb-name small { display:block; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted2); font-weight:300; margin-top:2px; text-transform:uppercase; }
+
+  .lb-sub {
+    font-size:9px;
+    color:var(--muted2);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-top:2px;
+  }
 
   .lb-time {
+    text-align:right;
+  }
+
+  .lb-dur {
     font-family:'Bebas Neue',sans-serif;
     font-size:20px;
     letter-spacing:2px;
     color:var(--text);
-    text-align:right;
   }
 
-  .lb-time small { display:block; font-family:'DM Mono',monospace; font-size:9px; color:var(--muted2); letter-spacing:1px; font-weight:300; margin-top:2px; text-align:right; }
+  .lb-since {
+    font-size:9px;
+    color:var(--muted2);
+    letter-spacing:1px;
+    margin-top:2px;
+  }
 
   /* ── MODAL ── */
   .overlay {
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.85);
+    background:rgba(0,0,0,0.88);
     backdrop-filter:blur(6px);
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:200;
+    z-index:500;
     opacity:0;
     pointer-events:none;
     transition:opacity 0.2s;
@@ -613,7 +749,7 @@
 
   .overlay.active .modal { transform:scale(1); }
 
-  .modal-icon { font-size:40px; margin-bottom:12px; }
+  .modal-icon { font-size:36px; margin-bottom:10px; }
 
   .modal h2 {
     font-family:'Bebas Neue',sans-serif;
@@ -623,11 +759,11 @@
     margin-bottom:8px;
   }
 
-  .modal p { font-size:11px; color:var(--muted2); line-height:1.8; margin-bottom:20px; }
+  .modal p { font-size:11px; color:var(--muted2); line-height:1.8; margin-bottom:16px; }
 
-  .modal-held {
+  .modal-time {
     font-family:'Bebas Neue',sans-serif;
-    font-size:32px;
+    font-size:36px;
     letter-spacing:3px;
     color:var(--text);
     margin-bottom:24px;
@@ -636,12 +772,12 @@
   .modal-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
   .btn-confirm {
-    padding:14px;
+    padding:13px;
     background:var(--accent);
     color:#080808;
     border:none;
     font-family:'Bebas Neue',sans-serif;
-    font-size:18px;
+    font-size:17px;
     letter-spacing:3px;
     cursor:pointer;
     border-radius:2px;
@@ -650,12 +786,12 @@
   .btn-confirm:hover { opacity:0.85; }
 
   .btn-cancel {
-    padding:14px;
+    padding:13px;
     background:transparent;
     color:var(--muted2);
     border:1px solid var(--border2);
     font-family:'Bebas Neue',sans-serif;
-    font-size:18px;
+    font-size:17px;
     letter-spacing:3px;
     cursor:pointer;
     border-radius:2px;
@@ -663,121 +799,124 @@
   }
   .btn-cancel:hover { border-color:var(--muted2); color:var(--text); }
 
-  /* ── UTILS ── */
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(16px); }
-    to { opacity:1; transform:translateY(0); }
-  }
-
-  @keyframes pulse {
-    0%,100% { text-shadow:0 0 60px rgba(200,245,96,0.15); }
-    50% { text-shadow:0 0 100px rgba(200,245,96,0.5); }
-  }
-
-  .pulsing { animation:pulse 1s ease 4; }
-
-  .link-btn {
-    background:none;
-    border:none;
-    color:var(--muted2);
-    font-family:'DM Mono',monospace;
-    font-size:10px;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    cursor:pointer;
-    text-decoration:underline;
-    transition:color 0.2s;
-  }
-  .link-btn:hover { color:var(--danger); }
-
   .loading {
     text-align:center;
-    padding:40px;
+    padding:32px;
     font-size:11px;
     letter-spacing:3px;
     color:var(--muted2);
     text-transform:uppercase;
   }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-14px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%,100% { text-shadow:0 0 60px rgba(200,245,96,0.12); }
+    50% { text-shadow:0 0 100px rgba(200,245,96,0.45); }
+  }
+  .pulsing { animation:pulse 1s ease 4; }
 </style>
 </head>
 <body>
 
-<!-- ── AUTH ── -->
+<!-- ══════════════════════════════════════
+     AUTH SCREENS
+══════════════════════════════════════ -->
 <div class="auth-wrap" id="authWrap">
   <div class="auth-box">
     <div class="auth-logo">SMOKE FREE</div>
-    <div class="auth-sub">Track your resistance</div>
+    <div class="auth-tagline">Track your resistance</div>
 
-    <!-- Login -->
-    <div class="auth-card" id="loginCard">
+    <!-- Sign In -->
+    <div class="auth-card" id="cardLogin">
       <div class="auth-title">Sign In</div>
-      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@email.com" /></div>
-      <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" /></div>
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
       <button class="btn-primary" id="loginBtn" onclick="doLogin()">Sign In</button>
-      <div class="err-msg" id="loginErr"></div>
-      <div class="auth-switch">No account? <a onclick="showSignup()">Create one</a> &nbsp;·&nbsp; <a onclick="showForgot()">Forgot password?</a></div>
-      <div style="text-align:center;margin-top:10px"><a onclick="clearStaleSession()" style="font-size:10px;color:var(--muted);cursor:pointer;letter-spacing:1px">Having trouble? Clear session</a></div>
+      <div class="auth-msg" id="loginMsg"></div>
+      <div class="auth-links">
+        <a onclick="showCard('cardSignup')">Create account</a>
+        <span class="divider">·</span>
+        <a onclick="showCard('cardForgot')">Forgot password?</a>
+      </div>
     </div>
 
-    <!-- Update Password (after reset link) -->
-    <div class="auth-card" id="updatePasswordCard" style="display:none">
-      <div class="auth-title">New Password</div>
-      <div style="font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:20px">Enter your new password below.</div>
-      <div class="field"><label>New Password</label><input type="password" id="newPassword" placeholder="min 6 characters" /></div>
-      <div class="field"><label>Confirm Password</label><input type="password" id="confirmPassword" placeholder="repeat password" /></div>
-      <button class="btn-primary" id="updatePwBtn" onclick="doUpdatePassword()">Update Password</button>
-      <div class="err-msg" id="updatePwErr"></div>
-    </div>
-    <!-- Forgot Password -->
-    <div class="auth-card" id="forgotCard" style="display:none">
-      <div class="auth-title">Reset Password</div>
-      <div style="font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:20px">Enter your email and we'll send you a reset link.</div>
-      <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="you@email.com" /></div>
-      <button class="btn-primary" id="forgotBtn" onclick="doForgot()">Send Reset Link</button>
-      <div class="err-msg" id="forgotErr"></div>
-      <div class="auth-switch"><a onclick="showLogin()">← Back to sign in</a></div>
-    </div>
-
-    <!-- Signup -->
-    <div class="auth-card" id="signupCard" style="display:none">
+    <!-- Sign Up -->
+    <div class="auth-card" id="cardSignup" style="display:none">
       <div class="auth-title">Create Account</div>
       <div class="field"><label>Username</label><input type="text" id="signupUsername" placeholder="your_username" /></div>
       <div class="field"><label>Email</label><input type="email" id="signupEmail" placeholder="you@email.com" /></div>
-      <div class="field"><label>Password</label><input type="password" id="signupPassword" placeholder="min 6 characters" /></div>
+      <div class="field"><label>Password</label><input type="password" id="signupPassword" placeholder="min 6 characters" onkeydown="if(event.key==='Enter')doSignup()" /></div>
       <button class="btn-primary" id="signupBtn" onclick="doSignup()">Create Account</button>
-      <div class="err-msg" id="signupErr"></div>
-      <div class="auth-switch">Have an account? <a onclick="showLogin()">Sign in</a></div>
+      <div class="auth-msg" id="signupMsg"></div>
+      <div class="auth-links">
+        <a onclick="showCard('cardLogin')">← Back to sign in</a>
+      </div>
+    </div>
+
+    <!-- Forgot Password -->
+    <div class="auth-card" id="cardForgot" style="display:none">
+      <div class="auth-title">Reset Password</div>
+      <div style="font-size:11px;color:var(--muted2);line-height:1.9;margin-bottom:20px">Enter your email and we'll send you a reset link.</div>
+      <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doForgot()" /></div>
+      <button class="btn-primary" id="forgotBtn" onclick="doForgot()">Send Reset Link</button>
+      <div class="auth-msg" id="forgotMsg"></div>
+      <div class="auth-links">
+        <a onclick="showCard('cardLogin')">← Back to sign in</a>
+      </div>
+    </div>
+
+    <!-- Update Password (after reset link click) -->
+    <div class="auth-card" id="cardUpdatePw" style="display:none">
+      <div class="auth-title">New Password</div>
+      <div class="field"><label>New Password</label><input type="password" id="newPw" placeholder="min 6 characters" /></div>
+      <div class="field"><label>Confirm Password</label><input type="password" id="confirmPw" placeholder="repeat password" onkeydown="if(event.key==='Enter')doUpdatePassword()" /></div>
+      <button class="btn-primary" id="updatePwBtn" onclick="doUpdatePassword()">Update Password</button>
+      <div class="auth-msg" id="updatePwMsg"></div>
     </div>
   </div>
 </div>
 
-<!-- ── APP ── -->
+<!-- ══════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════ -->
 <div class="app" id="appWrap">
+
   <nav class="nav">
     <div class="nav-logo">SF</div>
-    <div class="nav-user">
-      <span>@<span class="nav-username" id="navUsername">—</span></span>
+    <div class="nav-right">
+      <span>@<span id="navUsername" class="nav-username">—</span></span>
       <button class="btn-ghost" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('tracker')">Tracker</button>
-    <button class="tab" onclick="switchTab('friends')">Friends</button>
-    <button class="tab" onclick="switchTab('leaderboard')">Leaderboard</button>
+    <button class="tab active" id="tab-tracker" onclick="switchTab('tracker')">Tracker</button>
+    <button class="tab" id="tab-friends" onclick="switchTab('friends')">Friends <span id="friendReqBadge" style="display:none;color:var(--danger);margin-left:4px">●</span></button>
+    <button class="tab" id="tab-leaderboard" onclick="switchTab('leaderboard')">Leaderboard</button>
   </div>
 
   <div class="content">
 
-    <!-- TRACKER -->
+    <!-- ── TRACKER ── -->
     <div class="panel active" id="panel-tracker">
       <div class="timer-card">
         <div class="timer-label">Time since last cigarette</div>
-        <div class="timer-display" id="timerDisplay">00:00:00</div>
-        <div class="timer-since">Since <span id="timerSince">—</span></div>
-        <button class="smoked-btn" id="smokedBtn" onclick="openSmokeModal()">
-          <span>🚬 &nbsp; I Just Smoked</span>
-        </button>
+        <div class="timer-display stopped" id="timerDisplay">--:--:--</div>
+        <div class="timer-since" id="timerSince"></div>
+        <div class="timer-controls">
+          <button class="ctrl-btn btn-start" id="btnStart" onclick="startTimer()">▶ Start</button>
+          <button class="ctrl-btn btn-stop" id="btnStop" onclick="stopTimer()" disabled>■ Stop</button>
+          <button class="ctrl-btn btn-smoked" id="btnSmoked" onclick="openSmokeModal()" disabled>🚬 Smoked</button>
+        </div>
         <div class="status-msg" id="statusMsg"></div>
       </div>
 
@@ -795,571 +934,705 @@
           <div class="stat-lbl">Personal best</div>
         </div>
       </div>
-      <div id="logContainer"><div class="empty-state">No sessions yet — log your first smoke</div></div>
+      <div id="logContainer"></div>
     </div>
 
-    <!-- FRIENDS -->
+    <!-- ── FRIENDS ── -->
     <div class="panel" id="panel-friends">
-      <div class="add-friend-row">
-        <input type="text" id="friendInput" placeholder="Enter username..." />
-        <button class="btn-accent" onclick="addFriend()">Add</button>
+
+      <!-- Send request -->
+      <div class="subsection">
+        <div class="subsection-title">Add Friend</div>
+        <div class="add-row">
+          <input type="text" id="friendInput" placeholder="Enter username..." onkeydown="if(event.key==='Enter')sendFriendRequest()" />
+          <button class="btn-sm" onclick="sendFriendRequest()">Send</button>
+        </div>
+        <div class="inline-msg" id="friendMsg"></div>
       </div>
-      <div class="err-msg" id="friendErr" style="margin-bottom:12px"></div>
-      <div id="friendsContainer"><div class="loading">Loading friends...</div></div>
+
+      <!-- Incoming requests -->
+      <div class="subsection" id="incomingSection" style="display:none">
+        <div class="subsection-title">Incoming Requests</div>
+        <div id="incomingList"></div>
+      </div>
+
+      <!-- Friends list -->
+      <div class="subsection">
+        <div class="subsection-title">My Friends</div>
+        <div id="friendsList"><div class="loading">Loading...</div></div>
+      </div>
     </div>
 
-    <!-- LEADERBOARD -->
+    <!-- ── LEADERBOARD ── -->
     <div class="panel" id="panel-leaderboard">
-      <div id="lbContainer"><div class="loading">Loading leaderboard...</div></div>
+      <div id="lbContainer"><div class="loading">Loading...</div></div>
     </div>
 
   </div>
 </div>
 
-<!-- Smoke modal -->
+<!-- Smoke confirmation modal -->
 <div class="overlay" id="smokeOverlay">
   <div class="modal">
     <div class="modal-icon">🚬</div>
     <h2>Log a smoke?</h2>
-    <p>This records your resistance time and resets the clock.</p>
-    <div class="modal-held" id="modalHeld">—</div>
+    <p>This records your resistance time, resets and continues the timer.</p>
+    <div class="modal-time" id="modalTime">—</div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeSmokeModal()">Cancel</button>
-      <button class="btn-confirm" onclick="logSmoke()">Log it</button>
+      <button class="btn-confirm" onclick="confirmSmoke()">Log it</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ── Supabase init ──
-  const { createClient } = supabase;
-  const sb = createClient(
-    'https://vtlivesjwzinffceeriv.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA'
-  );
+// ══════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════
+const { createClient } = supabase;
+const sb = createClient(
+  'https://vtlivesjwzinffceeriv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA'
+);
 
-  // ── State ──
-  let _user = null;
-  let _profile = null;
-  let _currentSession = null; // { id, start_time }
-  let _timerInterval = null;
-  let _friendTimers = {};
-  let _pendingSmoke = null;
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let _user     = null;
+let _profile  = null;
+let _timerRunning = false;
+let _timerStart   = null; // timestamp when current run started
+let _timerInterval = null;
+let _friendTimers  = {};
+let _pendingSmoke  = null;
 
-  // ── Format helpers ──
-  function fmtDuration(ms) {
-    if (!ms || ms < 0) return '00:00:00';
-    const s = Math.floor(ms / 1000);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-  }
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+function fmtDuration(ms) {
+  if (!ms || ms < 0) return '00:00:00';
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
 
-  function fmtDurationShort(ms) {
-    if (!ms || ms < 0) return '0s';
-    const s = Math.floor(ms / 1000);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    if (h >= 24) return `${Math.floor(h/24)}d ${h%24}h`;
-    if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
-    if (m > 0) return `${m}m ${String(sec).padStart(2,'0')}s`;
-    return `${sec}s`;
-  }
+function fmtShort(ms) {
+  if (!ms || ms < 0) return '0s';
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (h >= 24) return `${Math.floor(h/24)}d ${h%24}h ${String(m).padStart(2,'0')}m`;
+  if (h > 0)   return `${h}h ${String(m).padStart(2,'0')}m`;
+  if (m > 0)   return `${m}m ${String(sec).padStart(2,'0')}s`;
+  return `${sec}s`;
+}
 
-  function fmtDate(ts) {
-    return new Date(ts).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-  }
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
 
-  // ── Auth ──
-  function showSignup() {
-    hideAllAuthCards();
-    document.getElementById('signupCard').style.display = 'block';
-  }
+function setStatus(msg, color) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.style.color = color || 'var(--muted2)';
+  if (msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 3000);
+}
 
-  function hideAllAuthCards() {
-    ['loginCard','signupCard','forgotCard','updatePasswordCard'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-  }
+// ══════════════════════════════════════
+// AUTH SCREENS
+// ══════════════════════════════════════
+function showCard(id) {
+  ['cardLogin','cardSignup','cardForgot','cardUpdatePw'].forEach(c => {
+    const el = document.getElementById(c);
+    if (el) el.style.display = c === id ? 'block' : 'none';
+  });
+  // Clear messages
+  ['loginMsg','signupMsg','forgotMsg','updatePwMsg'].forEach(m => {
+    const el = document.getElementById(m);
+    if (el) { el.textContent = ''; el.className = 'auth-msg'; }
+  });
+}
 
-  function showForgot() {
-    hideAllAuthCards();
-    document.getElementById('forgotCard').style.display = 'block';
-  }
+function setAuthMsg(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = `auth-msg ${type || ''}`;
+}
 
-  function showLogin() {
-    hideAllAuthCards();
-    document.getElementById('loginCard').style.display = 'block';
-  }
-
-  async function doForgot() {
-    const email = document.getElementById('forgotEmail').value.trim();
-    const err   = document.getElementById('forgotErr');
-    const btn   = document.getElementById('forgotBtn');
-    if (!email) { err.textContent = 'Please enter your email.'; return; }
-    btn.disabled = true; btn.textContent = 'Sending...';
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname + '?reset=true'
-    });
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPassword').value;
+  const btn   = document.getElementById('loginBtn');
+  if (!email || !pass) { setAuthMsg('loginMsg','Please fill in all fields.','error'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  setAuthMsg('loginMsg','');
+  try {
+    const timeout = new Promise((_,rej) => setTimeout(() => rej(new Error('Request timed out. Please try again.')), 10000));
+    const { data, error } = await Promise.race([sb.auth.signInWithPassword({ email, password: pass }), timeout]);
     if (error) {
-      err.textContent = error.message;
-      btn.disabled = false; btn.textContent = 'Send Reset Link';
-    } else {
-      err.style.color = 'var(--accent)';
-      err.textContent = 'Reset link sent! Check your email.';
-      btn.disabled = false; btn.textContent = 'Send Reset Link';
+      setAuthMsg('loginMsg', error.message, 'error');
+    } else if (!data?.user) {
+      setAuthMsg('loginMsg', 'Sign in failed. Please try again.', 'error');
     }
+    // success handled by onAuthStateChange
+  } catch(e) {
+    setAuthMsg('loginMsg', e.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Sign In';
+}
+
+async function doSignup() {
+  const username = document.getElementById('signupUsername').value.trim().toLowerCase();
+  const email    = document.getElementById('signupEmail').value.trim();
+  const pass     = document.getElementById('signupPassword').value;
+  const btn      = document.getElementById('signupBtn');
+
+  if (!username || !email || !pass) { setAuthMsg('signupMsg','Please fill in all fields.','error'); return; }
+  if (!/^[a-z0-9_]+$/.test(username)) { setAuthMsg('signupMsg','Username: letters, numbers, underscores only.','error'); return; }
+  if (pass.length < 6) { setAuthMsg('signupMsg','Password must be at least 6 characters.','error'); return; }
+
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  setAuthMsg('signupMsg','');
+
+  // Check username taken
+  const { data: existing } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
+  if (existing) {
+    setAuthMsg('signupMsg','Username already taken. Try another.','error');
+    btn.disabled = false; btn.textContent = 'Create Account'; return;
   }
 
-  async function doUpdatePassword() {
-    const newPw  = document.getElementById('newPassword').value;
-    const confPw = document.getElementById('confirmPassword').value;
-    const err    = document.getElementById('updatePwErr');
-    const btn    = document.getElementById('updatePwBtn');
-    if (newPw.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
-    if (newPw !== confPw) { err.textContent = 'Passwords do not match.'; return; }
-    btn.disabled = true; btn.textContent = 'Updating...';
-    const { error } = await sb.auth.updateUser({ password: newPw });
-    if (error) {
-      err.textContent = error.message;
-      btn.disabled = false; btn.textContent = 'Update Password';
-    } else {
-      err.style.color = 'var(--accent)';
-      err.textContent = 'Password updated! Signing you in...';
-    }
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  if (error) {
+    const msg = error.message.toLowerCase().includes('already') 
+      ? 'An account with this email already exists. Please sign in.' 
+      : error.message;
+    setAuthMsg('signupMsg', msg, 'error');
+    btn.disabled = false; btn.textContent = 'Create Account'; return;
   }
 
-  function clearStaleSession() {
-    Object.keys(localStorage).forEach(k => {
-      if (k.includes('supabase') || k.includes('sb-')) localStorage.removeItem(k);
-    });
-    location.reload();
-  }
-
-  async function doLogin() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass  = document.getElementById('loginPassword').value;
-    const err   = document.getElementById('loginErr');
-    const btn   = document.getElementById('loginBtn');
-    if (!email || !pass) { err.textContent = 'Please fill in all fields.'; return; }
-    btn.disabled = true; btn.textContent = 'Signing in...';
-    err.textContent = '';
-    try {
-      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Please refresh and try again.')), 8000));
-      const loginReq = sb.auth.signInWithPassword({ email, password: pass });
-      const { data, error } = await Promise.race([loginReq, timeout]);
-      if (error) {
-        err.textContent = error.message;
-        btn.disabled = false; btn.textContent = 'Sign In';
-      } else if (!data?.user) {
-        err.textContent = 'No user returned. Please try again.';
-        btn.disabled = false; btn.textContent = 'Sign In';
-      }
-    } catch(e) {
-      err.textContent = e.message;
-      btn.disabled = false; btn.textContent = 'Sign In';
-    }
-  }
-
-  async function doSignup() {
-    const username = document.getElementById('signupUsername').value.trim().toLowerCase();
-    const email    = document.getElementById('signupEmail').value.trim();
-    const pass     = document.getElementById('signupPassword').value;
-    const err      = document.getElementById('signupErr');
-    const btn      = document.getElementById('signupBtn');
-
-    if (!username || !email || !pass) { err.textContent = 'Please fill in all fields.'; return; }
-    if (!/^[a-z0-9_]+$/.test(username)) { err.textContent = 'Username: letters, numbers, underscores only.'; return; }
-    if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
-
-    btn.disabled = true; btn.textContent = 'Creating account...';
-
-    // Check username taken
-    const { data: existing } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
-    if (existing) { err.textContent = 'Username already taken.'; btn.disabled = false; btn.textContent = 'Create Account'; return; }
-
-    const { data, error } = await sb.auth.signUp({ email, password: pass });
-    if (error) {
-      if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('already exists')) {
-        err.textContent = 'An account with this email already exists. Please sign in instead.';
-      } else {
-        err.textContent = error.message;
-      }
+  // Create profile
+  if (data.user) {
+    const { error: pErr } = await sb.from('profiles').insert({ id: data.user.id, username });
+    if (pErr && pErr.code !== '23505') {
+      setAuthMsg('signupMsg','Account created but profile failed. Please sign in.','error');
       btn.disabled = false; btn.textContent = 'Create Account'; return;
     }
-
-    // Create profile
-    const { error: profileErr } = await sb.from('profiles').insert({ id: data.user.id, username });
-    if (profileErr) {
-      if (profileErr.code === '23505') {
-        err.textContent = 'An account with this email already exists. Please sign in instead.';
-      } else {
-        err.textContent = 'Account created but profile setup failed. Please sign in.';
-      }
-      btn.disabled = false; btn.textContent = 'Create Account'; return;
-    }
-
-    // Success — show message then redirect to login
-    err.style.color = 'var(--accent)';
-    err.textContent = '✓ Account created! Check your email to confirm, then sign in.';
-    btn.textContent = 'Done!';
-    setTimeout(() => {
-      err.style.color = '';
-      err.textContent = '';
-      showLogin();
-      document.getElementById('loginEmail').value = email;
-    }, 3000);
   }
 
-  // ── Inactivity timer (30 min) ──
-  let _inactivityTimer = null;
-  const INACTIVITY_MS = 30 * 60 * 1000;
+  setAuthMsg('signupMsg','✓ Account created! Check your email to confirm, then sign in.','success');
+  btn.textContent = 'Done!';
+  setTimeout(() => {
+    showCard('cardLogin');
+    document.getElementById('loginEmail').value = email;
+    btn.disabled = false; btn.textContent = 'Create Account';
+  }, 3000);
+}
 
-  function resetInactivityTimer() {
-    clearTimeout(_inactivityTimer);
-    _inactivityTimer = setTimeout(() => {
-      alert('You have been signed out due to inactivity.');
-      doLogout();
-    }, INACTIVITY_MS);
+async function doForgot() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const btn   = document.getElementById('forgotBtn');
+  if (!email) { setAuthMsg('forgotMsg','Please enter your email.','error'); return; }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  if (error) {
+    setAuthMsg('forgotMsg', error.message, 'error');
+  } else {
+    setAuthMsg('forgotMsg','✓ Reset link sent! Check your email.','success');
+    setTimeout(() => showCard('cardLogin'), 4000);
+  }
+  btn.disabled = false; btn.textContent = 'Send Reset Link';
+}
+
+async function doUpdatePassword() {
+  const newPw  = document.getElementById('newPw').value;
+  const confPw = document.getElementById('confirmPw').value;
+  const btn    = document.getElementById('updatePwBtn');
+  if (newPw.length < 6) { setAuthMsg('updatePwMsg','Password must be at least 6 characters.','error'); return; }
+  if (newPw !== confPw)  { setAuthMsg('updatePwMsg','Passwords do not match.','error'); return; }
+  btn.disabled = true; btn.textContent = 'Updating...';
+  const { error } = await sb.auth.updateUser({ password: newPw });
+  if (error) {
+    setAuthMsg('updatePwMsg', error.message, 'error');
+    btn.disabled = false; btn.textContent = 'Update Password';
+  } else {
+    setAuthMsg('updatePwMsg','✓ Password updated! Signing you in...','success');
+  }
+}
+
+function clearStaleSession() {
+  Object.keys(localStorage).forEach(k => {
+    if (k.includes('supabase') || k.startsWith('sb-')) localStorage.removeItem(k);
+  });
+  location.reload();
+}
+
+// ══════════════════════════════════════
+// APP BOOTSTRAP
+// ══════════════════════════════════════
+async function bootstrap(user) {
+  _user = user;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  _profile = profile;
+  document.getElementById('navUsername').textContent = profile?.username || user.email;
+
+  document.getElementById('authWrap').style.display = 'none';
+  document.getElementById('appWrap').style.display = 'flex';
+
+  // Restore timer state from localStorage
+  const savedStart = localStorage.getItem(`sf_timer_${user.id}`);
+  const savedRunning = localStorage.getItem(`sf_running_${user.id}`);
+  if (savedStart && savedRunning === 'true') {
+    _timerStart   = parseInt(savedStart);
+    _timerRunning = true;
+    resumeTimerUI();
+  } else {
+    document.getElementById('timerDisplay').textContent = '--:--:--';
+    document.getElementById('timerDisplay').classList.add('stopped');
   }
 
-  ['mousemove','keydown','click','touchstart','scroll'].forEach(e => {
-    document.addEventListener(e, resetInactivityTimer, { passive: true });
+  await loadLog();
+  await checkIncomingRequests();
+}
+
+// ══════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════
+function startTimer() {
+  if (_timerRunning) return;
+  _timerRunning = true;
+  _timerStart   = Date.now();
+  localStorage.setItem(`sf_timer_${_user.id}`, _timerStart);
+  localStorage.setItem(`sf_running_${_user.id}`, 'true');
+  resumeTimerUI();
+  setStatus('Timer started');
+}
+
+function stopTimer() {
+  if (!_timerRunning) return;
+  _timerRunning = false;
+  clearInterval(_timerInterval);
+  localStorage.setItem(`sf_running_${_user.id}`, 'false');
+  document.getElementById('timerDisplay').classList.add('stopped');
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnStop').disabled  = true;
+  document.getElementById('btnSmoked').disabled = true;
+  setStatus('Timer stopped');
+}
+
+function resumeTimerUI() {
+  clearInterval(_timerInterval);
+  const disp  = document.getElementById('timerDisplay');
+  const since = document.getElementById('timerSince');
+  disp.classList.remove('stopped');
+  document.getElementById('btnStart').disabled  = true;
+  document.getElementById('btnStop').disabled   = false;
+  document.getElementById('btnSmoked').disabled = false;
+
+  _timerInterval = setInterval(() => {
+    const elapsed = Date.now() - _timerStart;
+    const f = fmtDuration(elapsed);
+    disp.textContent = f;
+    disp.classList.toggle('long', elapsed > 36000000); // >10h
+    since.textContent = `Since ${fmtDate(_timerStart)}`;
+  }, 1000);
+}
+
+// ══════════════════════════════════════
+// SMOKE MODAL
+// ══════════════════════════════════════
+function openSmokeModal() {
+  if (!_timerRunning || !_timerStart) return;
+  const elapsed = Date.now() - _timerStart;
+  _pendingSmoke = { start: _timerStart, elapsed };
+  document.getElementById('modalTime').textContent = fmtShort(elapsed);
+  document.getElementById('smokeOverlay').classList.add('active');
+}
+
+function closeSmokeModal() {
+  document.getElementById('smokeOverlay').classList.remove('active');
+  _pendingSmoke = null;
+}
+
+async function confirmSmoke() {
+  closeSmokeModal();
+  if (!_pendingSmoke) return;
+
+  const { start, elapsed } = _pendingSmoke;
+  const endTime = Date.now();
+
+  setStatus('Saving...');
+  document.getElementById('btnSmoked').disabled = true;
+
+  const { error } = await sb.from('sessions').insert({
+    user_id:    _user.id,
+    start_time: start,
+    end_time:   endTime
   });
 
-  async function doLogout() {
-    clearTimeout(_inactivityTimer);
-    clearInterval(_timerInterval);
-    Object.values(_friendTimers).forEach(clearInterval);
-    _friendTimers = {};
-    _user = null; _profile = null; _currentSession = null;
-
-    try {
-      // Force sign out even if lock is held
-      await Promise.race([
-        sb.auth.signOut(),
-        new Promise(resolve => setTimeout(resolve, 3000))
-      ]);
-    } catch {}
-
-    document.getElementById('appWrap').style.display = 'none';
-    document.getElementById('authWrap').style.display = 'flex';
-    showLogin();
+  if (error) {
+    setStatus('Save failed. Try again.', 'var(--danger)');
+    document.getElementById('btnSmoked').disabled = false;
+    return;
   }
 
-  // ── Session management ──
-  async function loadCurrentSession() {
-    // Get the most recent open session (no end_time)
-    const { data } = await sb.from('sessions')
-      .select('*')
-      .eq('user_id', _user.id)
+  // Reset timer and keep running
+  _timerStart = endTime;
+  localStorage.setItem(`sf_timer_${_user.id}`, _timerStart);
+  localStorage.setItem(`sf_running_${_user.id}`, 'true');
+
+  // Pulse
+  const disp = document.getElementById('timerDisplay');
+  disp.classList.remove('pulsing');
+  void disp.offsetWidth;
+  disp.classList.add('pulsing');
+  setTimeout(() => disp.classList.remove('pulsing'), 4000);
+
+  document.getElementById('btnSmoked').disabled = false;
+  setStatus('Logged ✓', 'var(--success)');
+  await loadLog();
+}
+
+// ══════════════════════════════════════
+// LOG
+// ══════════════════════════════════════
+async function loadLog() {
+  const { data: sessions } = await sb.from('sessions')
+    .select('*')
+    .eq('user_id', _user.id)
+    .not('end_time', 'is', null)
+    .order('end_time', { ascending: false });
+
+  const container = document.getElementById('logContainer');
+  const statsGrid = document.getElementById('statsGrid');
+
+  if (!sessions || sessions.length === 0) {
+    container.innerHTML = '<div class="empty-state">No sessions logged yet</div>';
+    statsGrid.style.display = 'none';
+    return;
+  }
+
+  statsGrid.style.display = 'grid';
+  const durations = sessions.map(s => s.end_time - s.start_time);
+  const best = Math.max(...durations);
+  document.getElementById('statCount').textContent = sessions.length;
+  document.getElementById('statBest').textContent  = fmtShort(best);
+
+  container.innerHTML = '<div class="log-list">' + sessions.map((s, i) => {
+    const dur   = s.end_time - s.start_time;
+    const isBest = dur === best;
+    return `<div class="log-item ${isBest ? 'is-best' : ''}">
+      <span class="log-num">#${sessions.length - i}</span>
+      <span class="log-dur ${isBest ? 'best' : ''}">${fmtDuration(dur)}${isBest ? ' 🏆' : ''}</span>
+      <span class="log-dates">${fmtDate(s.start_time)} →<br>${fmtDate(s.end_time)}</span>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+async function clearLog() {
+  if (!confirm('Clear all sessions? Your timer keeps running.')) return;
+  setStatus('Clearing...');
+  await sb.from('sessions').delete().eq('user_id', _user.id).not('end_time', 'is', null);
+  setStatus('Cleared ✓', 'var(--success)');
+  await loadLog();
+}
+
+// ══════════════════════════════════════
+// FRIENDS
+// ══════════════════════════════════════
+async function sendFriendRequest() {
+  const input    = document.getElementById('friendInput');
+  const msgEl    = document.getElementById('friendMsg');
+  const username = input.value.trim().toLowerCase();
+  msgEl.textContent = ''; msgEl.className = 'inline-msg';
+
+  if (!username) { msgEl.textContent = 'Enter a username.'; msgEl.className = 'inline-msg error'; return; }
+  if (username === _profile.username) { msgEl.textContent = "You can't add yourself."; msgEl.className = 'inline-msg error'; return; }
+
+  const { data: targetProfile } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
+  if (!targetProfile) { msgEl.textContent = `User @${username} not found.`; msgEl.className = 'inline-msg error'; return; }
+
+  // Check if already friends or request pending
+  const { data: existing } = await sb.from('friendships')
+    .select('id, status')
+    .or(`and(user_id.eq.${_user.id},friend_id.eq.${targetProfile.id}),and(user_id.eq.${targetProfile.id},friend_id.eq.${_user.id})`)
+    .maybeSingle();
+
+  if (existing) {
+    const msg = existing.status === 'accepted' ? 'You are already friends.' : 'A request already exists.';
+    msgEl.textContent = msg; msgEl.className = 'inline-msg error'; return;
+  }
+
+  const { error } = await sb.from('friendships').insert({
+    user_id: _user.id, friend_id: targetProfile.id, status: 'pending'
+  });
+
+  if (error) { msgEl.textContent = 'Something went wrong. Try again.'; msgEl.className = 'inline-msg error'; return; }
+
+  input.value = '';
+  msgEl.textContent = `✓ Friend request sent to @${username}!`;
+  msgEl.className = 'inline-msg success';
+  setTimeout(() => { msgEl.textContent = ''; }, 3000);
+}
+
+async function acceptRequest(id, fromUsername) {
+  await sb.from('friendships').update({ status: 'accepted' }).eq('id', id);
+  await loadFriends();
+}
+
+async function declineRequest(id) {
+  await sb.from('friendships').delete().eq('id', id);
+  await loadFriends();
+}
+
+async function removeFriend(friendId, username) {
+  if (!confirm(`Remove @${username}?`)) return;
+  await sb.from('friendships').delete()
+    .or(`and(user_id.eq.${_user.id},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${_user.id})`);
+  clearInterval(_friendTimers[friendId]);
+  delete _friendTimers[friendId];
+  await loadFriends();
+}
+
+async function checkIncomingRequests() {
+  const { data } = await sb.from('friendships')
+    .select('id, user_id, profiles!friendships_user_id_fkey(username)')
+    .eq('friend_id', _user.id)
+    .eq('status', 'pending');
+  const badge = document.getElementById('friendReqBadge');
+  badge.style.display = data && data.length > 0 ? 'inline' : 'none';
+}
+
+async function loadFriends() {
+  // Clear old timers
+  Object.values(_friendTimers).forEach(clearInterval);
+  _friendTimers = {};
+
+  // Incoming requests
+  const { data: incoming } = await sb.from('friendships')
+    .select('id, user_id, profiles!friendships_user_id_fkey(username), created_at')
+    .eq('friend_id', _user.id)
+    .eq('status', 'pending');
+
+  const incomingSection = document.getElementById('incomingSection');
+  const incomingList    = document.getElementById('incomingList');
+  const badge = document.getElementById('friendReqBadge');
+
+  if (incoming && incoming.length > 0) {
+    incomingSection.style.display = 'block';
+    badge.style.display = 'inline';
+    incomingList.innerHTML = incoming.map(r => `
+      <div class="request-card">
+        <div>
+          <div class="request-name">@${r.profiles.username}</div>
+          <div class="request-meta">Sent ${fmtDate(new Date(r.created_at).getTime())}</div>
+        </div>
+        <div class="request-actions">
+          <button class="btn-accept" onclick="acceptRequest('${r.id}','${r.profiles.username}')">Accept</button>
+          <button class="btn-decline" onclick="declineRequest('${r.id}')">Decline</button>
+        </div>
+      </div>`).join('');
+  } else {
+    incomingSection.style.display = 'none';
+    badge.style.display = 'none';
+  }
+
+  // Accepted friends (both directions)
+  const { data: friendships } = await sb.from('friendships')
+    .select('id, user_id, friend_id, profiles!friendships_user_id_fkey(username), profiles!friendships_friend_id_fkey(username)')
+    .or(`user_id.eq.${_user.id},friend_id.eq.${_user.id}`)
+    .eq('status', 'accepted');
+
+  const friendsList = document.getElementById('friendsList');
+
+  if (!friendships || friendships.length === 0) {
+    friendsList.innerHTML = '<div class="empty-state">No friends yet — send a request above</div>';
+    return;
+  }
+
+  friendsList.innerHTML = '';
+
+  for (const f of friendships) {
+    const isSender   = f.user_id === _user.id;
+    const friendId   = isSender ? f.friend_id : f.user_id;
+    const friendName = isSender ? f['profiles!friendships_friend_id_fkey'].username : f['profiles!friendships_user_id_fkey'].username;
+
+    // Get friend's latest timer state from localStorage key via session
+    const { data: sessions } = await sb.from('sessions')
+      .select('start_time, end_time')
+      .eq('user_id', friendId)
+      .order('end_time', { ascending: false, nullsFirst: true })
+      .limit(1);
+
+    const latest = sessions && sessions.length > 0 ? sessions[0] : null;
+    const isRunning = latest && !latest.end_time;
+    const sinceTs   = isRunning ? latest.start_time : null;
+
+    const card = document.createElement('div');
+    card.className = 'friend-card';
+    card.innerHTML = `
+      <div>
+        <div class="friend-name">@${friendName}</div>
+        <div class="friend-timer" id="ftimer-${friendId}">${sinceTs ? fmtDuration(Date.now() - sinceTs) : '—'}</div>
+        <div class="friend-meta" id="fmeta-${friendId}">${sinceTs ? 'Since ' + fmtDate(sinceTs) : 'No active session'}</div>
+      </div>
+      <button class="btn-remove" onclick="removeFriend('${friendId}','${friendName}')" title="Remove">✕</button>
+    `;
+    friendsList.appendChild(card);
+
+    if (sinceTs) {
+      _friendTimers[friendId] = setInterval(() => {
+        const el = document.getElementById(`ftimer-${friendId}`);
+        if (el) el.textContent = fmtDuration(Date.now() - sinceTs);
+      }, 1000);
+    }
+  }
+}
+
+// ══════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════
+async function loadLeaderboard() {
+  const container = document.getElementById('lbContainer');
+  container.innerHTML = '<div class="loading">Loading...</div>';
+
+  // Get all accepted friends
+  const { data: friendships } = await sb.from('friendships')
+    .select('user_id, friend_id')
+    .or(`user_id.eq.${_user.id},friend_id.eq.${_user.id}`)
+    .eq('status', 'accepted');
+
+  const friendIds = new Set([_user.id]);
+  (friendships || []).forEach(f => { friendIds.add(f.user_id); friendIds.add(f.friend_id); });
+  const allIds = Array.from(friendIds);
+
+  const { data: profiles } = await sb.from('profiles').select('id, username').in('id', allIds);
+
+  const entries = [];
+  for (const p of profiles) {
+    // Get the latest open session (no end_time) to determine current streak
+    const { data: openSession } = await sb.from('sessions')
+      .select('start_time')
+      .eq('user_id', p.id)
       .is('end_time', null)
       .order('start_time', { ascending: false })
       .limit(1);
 
-    if (data && data.length > 0) {
-      _currentSession = data[0];
-    } else {
-      // Create a new session
-      const { data: newS } = await sb.from('sessions')
-        .insert({ user_id: _user.id, start_time: Date.now() })
-        .select().single();
-      _currentSession = newS;
-    }
-  }
-
-  function startTimer() {
-    clearInterval(_timerInterval);
-    _timerInterval = setInterval(() => {
-      if (!_currentSession) return;
-      const elapsed = Date.now() - _currentSession.start_time;
-      const el = document.getElementById('timerDisplay');
-      const f = fmtDuration(elapsed);
-      el.textContent = f;
-      el.classList.toggle('long', f.replace(/:/g,'').length > 6 && elapsed > 3600000 * 10);
-      document.getElementById('timerSince').textContent = fmtDate(_currentSession.start_time);
-    }, 1000);
-  }
-
-  // ── Smoke modal ──
-  function openSmokeModal() {
-    if (!_currentSession) return;
-    const elapsed = Date.now() - _currentSession.start_time;
-    _pendingSmoke = { session: _currentSession, elapsed };
-    document.getElementById('modalHeld').textContent = fmtDurationShort(elapsed);
-    document.getElementById('smokeOverlay').classList.add('active');
-  }
-
-  function closeSmokeModal() {
-    document.getElementById('smokeOverlay').classList.remove('active');
-    _pendingSmoke = null;
-  }
-
-  async function logSmoke() {
-    closeSmokeModal();
-    if (!_pendingSmoke) return;
-
-    const btn = document.getElementById('smokedBtn');
-    btn.disabled = true;
-    setStatus('Saving...');
-
-    const endTime = Date.now();
-
-    // Close current session
-    await sb.from('sessions').update({ end_time: endTime }).eq('id', _pendingSmoke.session.id);
-
-    // Open new session
-    const { data: newS } = await sb.from('sessions')
-      .insert({ user_id: _user.id, start_time: endTime })
-      .select().single();
-    _currentSession = newS;
-
-    setStatus('Saved ✓');
-    setTimeout(() => setStatus(''), 2000);
-
-    // Pulse
-    const disp = document.getElementById('timerDisplay');
-    disp.classList.remove('pulsing');
-    void disp.offsetWidth;
-    disp.classList.add('pulsing');
-    setTimeout(() => disp.classList.remove('pulsing'), 4000);
-
-    btn.disabled = false;
-    await loadLog();
-  }
-
-  function setStatus(msg) { document.getElementById('statusMsg').textContent = msg; }
-
-  // ── Log ──
-  async function loadLog() {
-    const { data: sessions } = await sb.from('sessions')
-      .select('*')
-      .eq('user_id', _user.id)
+    // If no open session, get the latest closed session end_time
+    const { data: lastSmoke } = await sb.from('sessions')
+      .select('end_time')
+      .eq('user_id', p.id)
       .not('end_time', 'is', null)
-      .order('end_time', { ascending: false });
+      .order('end_time', { ascending: false })
+      .limit(1);
 
-    const container = document.getElementById('logContainer');
-    const statsGrid = document.getElementById('statsGrid');
+    const sinceTs = openSession && openSession.length > 0
+      ? openSession[0].start_time
+      : lastSmoke && lastSmoke.length > 0
+        ? lastSmoke[0].end_time
+        : null;
 
-    if (!sessions || sessions.length === 0) {
-      container.innerHTML = '<div class="empty-state">No sessions yet — log your first smoke</div>';
-      statsGrid.style.display = 'none';
-      return;
-    }
-
-    statsGrid.style.display = 'grid';
-    const durations = sessions.map(s => s.end_time - s.start_time);
-    const best = Math.max(...durations);
-    document.getElementById('statCount').textContent = sessions.length;
-    document.getElementById('statBest').textContent = fmtDurationShort(best);
-
-    container.innerHTML = '<div class="log-list">' + sessions.map((s, i) => {
-      const dur = s.end_time - s.start_time;
-      const isBest = dur === best;
-      return `<div class="log-item ${isBest ? 'best' : ''}">
-        <span class="log-num">#${sessions.length - i}</span>
-        <span class="log-dur ${isBest ? 'best-dur' : ''}">${fmtDuration(dur)}${isBest ? ' 🏆' : ''}</span>
-        <span class="log-dates">${fmtDate(s.start_time)} →<br>${fmtDate(s.end_time)}</span>
-      </div>`;
-    }).join('') + '</div>';
+    const elapsed = sinceTs ? Date.now() - sinceTs : 0;
+    entries.push({ id: p.id, username: p.username, elapsed, sinceTs });
   }
 
-  async function clearLog() {
-    if (!confirm('Clear all sessions? Your timer keeps running.')) return;
-    setStatus('Clearing...');
-    await sb.from('sessions').delete().eq('user_id', _user.id).not('end_time', 'is', null);
-    setStatus('Cleared ✓');
-    setTimeout(() => setStatus(''), 2000);
-    await loadLog();
+  // Sort by longest elapsed (best resistance first)
+  entries.sort((a, b) => b.elapsed - a.elapsed);
+
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-state">Add friends to see the leaderboard</div>';
+    return;
   }
 
-  // ── Friends ──
-  async function loadFriends() {
-    const container = document.getElementById('friendsContainer');
-    container.innerHTML = '<div class="loading">Loading...</div>';
+  const medals = ['🥇','🥈','🥉'];
+  container.innerHTML = entries.map((e, i) => {
+    const isMe     = e.id === _user.id;
+    const rankCls  = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
+    const rankDisp = i < 3 ? medals[i] : `#${i+1}`;
+    return `<div class="lb-item ${isMe ? 'is-me' : ''}">
+      <div class="lb-rank ${rankCls}">${rankDisp}</div>
+      <div class="lb-info">
+        <div class="lb-name ${isMe ? 'is-me' : ''}">@${e.username}</div>
+        <div class="lb-sub">${isMe ? 'you' : 'friend'}</div>
+      </div>
+      <div class="lb-time">
+        <div class="lb-dur">${fmtShort(e.elapsed)}</div>
+        <div class="lb-since">${e.sinceTs ? 'since ' + fmtDate(e.sinceTs) : 'no data'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-    const { data: friendships } = await sb.from('friendships')
-      .select('friend_id, profiles!friendships_friend_id_fkey(username)')
-      .eq('user_id', _user.id);
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+function switchTab(name) {
+  ['tracker','friends','leaderboard'].forEach(t => {
+    document.getElementById(`tab-${t}`)?.classList.toggle('active', t === name);
+    document.getElementById(`panel-${t}`)?.classList.toggle('active', t === name);
+  });
+  if (name === 'friends')     loadFriends();
+  if (name === 'leaderboard') loadLeaderboard();
+}
 
-    if (!friendships || friendships.length === 0) {
-      container.innerHTML = '<div class="empty-state">No friends added yet — search by username above</div>';
-      return;
-    }
+// ══════════════════════════════════════
+// SIGN OUT
+// ══════════════════════════════════════
+async function doLogout() {
+  clearInterval(_timerInterval);
+  Object.values(_friendTimers).forEach(clearInterval);
+  _friendTimers = {};
 
-    // Clear old friend timers
-    Object.values(_friendTimers).forEach(clearInterval);
-    _friendTimers = {};
+  // Note: we do NOT clear timer localStorage keys so timer persists across sessions
+  _user = null; _profile = null; _timerRunning = false; _timerStart = null;
 
-    container.innerHTML = '';
+  // Reset auth form fields
+  ['loginEmail','loginPassword','signupUsername','signupEmail','signupPassword','forgotEmail','newPw','confirmPw'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
 
-    for (const f of friendships) {
-      const username = f.profiles.username;
-      const friendId = f.friend_id;
+  document.getElementById('appWrap').style.display = 'none';
+  document.getElementById('authWrap').style.display = 'flex';
+  showCard('cardLogin');
 
-      // Get their current session
-      const { data: sessions } = await sb.from('sessions')
-        .select('*')
-        .eq('user_id', friendId)
-        .is('end_time', null)
-        .order('start_time', { ascending: false })
-        .limit(1);
+  try {
+    await Promise.race([sb.auth.signOut(), new Promise(r => setTimeout(r, 3000))]);
+  } catch {}
+}
 
-      const session = sessions && sessions.length > 0 ? sessions[0] : null;
-
-      const card = document.createElement('div');
-      card.className = 'friend-card';
-      card.id = `friend-${friendId}`;
-      card.innerHTML = `
-        <div class="friend-header">
-          <span class="friend-name">@${username}</span>
-          <button class="btn-remove" onclick="removeFriend('${friendId}', '${username}')" title="Remove">✕</button>
-        </div>
-        <div class="friend-timer" id="ftimer-${friendId}">${session ? fmtDuration(Date.now() - session.start_time) : '—'}</div>
-        <div class="friend-meta" id="fmeta-${friendId}">${session ? 'Since ' + fmtDate(session.start_time) : 'No active session'}</div>
-      `;
-      container.appendChild(card);
-
-      if (session) {
-        _friendTimers[friendId] = setInterval(() => {
-          const el = document.getElementById(`ftimer-${friendId}`);
-          if (el) el.textContent = fmtDuration(Date.now() - session.start_time);
-        }, 1000);
-      }
-    }
+// ══════════════════════════════════════
+// AUTH STATE LISTENER
+// ══════════════════════════════════════
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    document.getElementById('authWrap').style.display = 'flex';
+    document.getElementById('appWrap').style.display  = 'none';
+    showCard('cardUpdatePw');
+    return;
   }
-
-  async function addFriend() {
-    const input = document.getElementById('friendInput');
-    const err   = document.getElementById('friendErr');
-    const username = input.value.trim().toLowerCase();
-    err.textContent = '';
-
-    if (!username) { err.textContent = 'Enter a username.'; return; }
-    if (username === _profile.username) { err.textContent = "You can't add yourself."; return; }
-
-    const { data: profile } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
-    if (!profile) { err.textContent = `User @${username} not found.`; return; }
-
-    const { error } = await sb.from('friendships').insert({ user_id: _user.id, friend_id: profile.id });
-    if (error) { err.textContent = 'Already added or error occurred.'; return; }
-
-    input.value = '';
-    await loadFriends();
-  }
-
-  async function removeFriend(friendId, username) {
-    if (!confirm(`Remove @${username}?`)) return;
-    await sb.from('friendships').delete().eq('user_id', _user.id).eq('friend_id', friendId);
-    clearInterval(_friendTimers[friendId]);
-    delete _friendTimers[friendId];
-    await loadFriends();
-  }
-
-  // ── Leaderboard ──
-  async function loadLeaderboard() {
-    const container = document.getElementById('lbContainer');
-    container.innerHTML = '<div class="loading">Loading...</div>';
-
-    // Get friends + self
-    const { data: friendships } = await sb.from('friendships').select('friend_id').eq('user_id', _user.id);
-    const friendIds = (friendships || []).map(f => f.friend_id);
-    const allIds = [_user.id, ...friendIds];
-
-    // Get profiles
-    const { data: profiles } = await sb.from('profiles').select('id, username').in('id', allIds);
-
-    // Get current open sessions for each
-    const entries = [];
-    for (const p of profiles) {
-      const { data: sessions } = await sb.from('sessions')
-        .select('start_time')
-        .eq('user_id', p.id)
-        .is('end_time', null)
-        .order('start_time', { ascending: false })
-        .limit(1);
-
-      const start = sessions && sessions.length > 0 ? sessions[0].start_time : null;
-      const elapsed = start ? Date.now() - start : 0;
-      entries.push({ id: p.id, username: p.username, elapsed, start });
-    }
-
-    entries.sort((a, b) => b.elapsed - a.elapsed);
-
-    if (entries.length === 0) {
-      container.innerHTML = '<div class="empty-state">Add friends to see the leaderboard</div>';
-      return;
-    }
-
-    const rankSymbols = ['🥇','🥈','🥉'];
-    container.innerHTML = entries.map((e, i) => {
-      const isMe = e.id === _user.id;
-      const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
-      const rankDisplay = i < 3 ? rankSymbols[i] : `#${i+1}`;
-      return `<div class="lb-item ${isMe ? 'me' : ''}">
-        <div class="lb-rank ${rankClass}">${rankDisplay}</div>
-        <div class="lb-name ${isMe ? 'is-me' : ''}">@${e.username}<small>${isMe ? 'you' : 'friend'}</small></div>
-        <div class="lb-time">${fmtDurationShort(e.elapsed)}<small>${e.start ? 'since ' + fmtDate(e.start) : 'no session'}</small></div>
-      </div>`;
-    }).join('');
-  }
-
-  // ── Tabs ──
-  function switchTab(name) {
-    document.querySelectorAll('.tab').forEach((t,i) => {
-      t.classList.toggle('active', ['tracker','friends','leaderboard'][i] === name);
-    });
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(`panel-${name}`).classList.add('active');
-
-    if (name === 'friends') loadFriends();
-    if (name === 'leaderboard') loadLeaderboard();
-  }
-
-  // ── Bootstrap ──
-  async function bootstrap(user) {
-    _user = user;
-
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
-    _profile = profile;
-
-    document.getElementById('navUsername').textContent = profile?.username || user.email;
-    document.getElementById('authWrap').style.display = 'none';
-    document.getElementById('appWrap').style.display = 'flex';
-
-    await loadCurrentSession();
-    startTimer();
-    await loadLog();
-    resetInactivityTimer();
-  }
-
-  // ── Auth state listener ──
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'PASSWORD_RECOVERY') {
-      // Show update password form
-      document.getElementById('loginCard').style.display = 'none';
-      document.getElementById('signupCard').style.display = 'none';
-      document.getElementById('forgotCard').style.display = 'none';
-      document.getElementById('updatePasswordCard').style.display = 'block';
-      return;
-    }
-    if (session?.user) {
+  if (event === 'SIGNED_IN' && session?.user) {
+    // Only bootstrap if not already in app
+    if (document.getElementById('appWrap').style.display !== 'flex') {
       await bootstrap(session.user);
     }
-  });
+    return;
+  }
+  if (event === 'SIGNED_OUT') {
+    // handled by doLogout
+  }
+});
 
-  // Close modal on overlay click
-  document.getElementById('smokeOverlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('smokeOverlay')) closeSmokeModal();
-  });
-
-  // Enter key for auth forms
-  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-  document.getElementById('signupPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doSignup(); });
-  document.getElementById('friendInput').addEventListener('keydown', e => { if (e.key === 'Enter') addFriend(); });
+// Close modal on backdrop click
+document.getElementById('smokeOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('smokeOverlay')) closeSmokeModal();
+});
 </script>
 </body>
 </html>

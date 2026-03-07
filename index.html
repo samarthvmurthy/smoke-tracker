@@ -992,14 +992,40 @@
     }, 3000);
   }
 
+  // ── Inactivity timer (30 min) ──
+  let _inactivityTimer = null;
+  const INACTIVITY_MS = 30 * 60 * 1000;
+
+  function resetInactivityTimer() {
+    clearTimeout(_inactivityTimer);
+    _inactivityTimer = setTimeout(() => {
+      alert('You have been signed out due to inactivity.');
+      doLogout();
+    }, INACTIVITY_MS);
+  }
+
+  ['mousemove','keydown','click','touchstart','scroll'].forEach(e => {
+    document.addEventListener(e, resetInactivityTimer, { passive: true });
+  });
+
   async function doLogout() {
-    await sb.auth.signOut();
+    clearTimeout(_inactivityTimer);
     clearInterval(_timerInterval);
     Object.values(_friendTimers).forEach(clearInterval);
     _friendTimers = {};
     _user = null; _profile = null; _currentSession = null;
+
+    try {
+      // Force sign out even if lock is held
+      await Promise.race([
+        sb.auth.signOut(),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ]);
+    } catch {}
+
     document.getElementById('appWrap').style.display = 'none';
     document.getElementById('authWrap').style.display = 'flex';
+    showLogin();
   }
 
   // ── Session management ──
@@ -1285,6 +1311,7 @@
     await loadCurrentSession();
     startTimer();
     await loadLog();
+    resetInactivityTimer();
   }
 
   // ── Auth state listener ──

@@ -1617,11 +1617,12 @@ sb.auth.onAuthStateChange(async (event, session) => {
     showCard('cardUpdatePw');
     return;
   }
+  if (event === 'INITIAL_SESSION' && session?.user) {
+    await bootstrap(session.user);
+    return;
+  }
   if (event === 'SIGNED_IN' && session?.user) {
-    // Only bootstrap if not already in app
-    if (document.getElementById('appWrap').style.display !== 'flex') {
-      await bootstrap(session.user);
-    }
+    await bootstrap(session.user);
     return;
   }
   if (event === 'SIGNED_OUT') {

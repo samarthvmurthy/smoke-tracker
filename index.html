@@ -888,7 +888,7 @@
     btn.disabled = true; btn.textContent = 'Creating account...';
 
     // Check username taken
-    const { data: existing } = await sb.from('profiles').select('id').eq('username', username).single();
+    const { data: existing } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
     if (existing) { err.textContent = 'Username already taken.'; btn.disabled = false; btn.textContent = 'Create Account'; return; }
 
     const { data, error } = await sb.auth.signUp({ email, password: pass });
@@ -1099,7 +1099,7 @@
     if (!username) { err.textContent = 'Enter a username.'; return; }
     if (username === _profile.username) { err.textContent = "You can't add yourself."; return; }
 
-    const { data: profile } = await sb.from('profiles').select('id').eq('username', username).single();
+    const { data: profile } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
     if (!profile) { err.textContent = `User @${username} not found.`; return; }
 
     const { error } = await sb.from('friendships').insert({ user_id: _user.id, friend_id: profile.id });

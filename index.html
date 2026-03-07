@@ -727,6 +727,8 @@
       <button class="btn-primary" id="updatePwBtn" onclick="doUpdatePassword()">Update Password</button>
       <div class="err-msg" id="updatePwErr"></div>
     </div>
+    <!-- Forgot Password -->
+    <div class="auth-card" id="forgotCard" style="display:none">
       <div class="auth-title">Reset Password</div>
       <div style="font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:20px">Enter your email and we'll send you a reset link.</div>
       <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="you@email.com" /></div>
@@ -871,19 +873,24 @@
 
   // ── Auth ──
   function showSignup() {
-    document.getElementById('loginCard').style.display = 'none';
+    hideAllAuthCards();
     document.getElementById('signupCard').style.display = 'block';
   }
 
+  function hideAllAuthCards() {
+    ['loginCard','signupCard','forgotCard','updatePasswordCard'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+  }
+
   function showForgot() {
-    document.getElementById('loginCard').style.display = 'none';
-    document.getElementById('signupCard').style.display = 'none';
+    hideAllAuthCards();
     document.getElementById('forgotCard').style.display = 'block';
   }
 
   function showLogin() {
-    document.getElementById('signupCard').style.display = 'none';
-    document.getElementById('forgotCard').style.display = 'none';
+    hideAllAuthCards();
     document.getElementById('loginCard').style.display = 'block';
   }
 

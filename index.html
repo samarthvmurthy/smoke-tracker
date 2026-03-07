@@ -715,7 +715,24 @@
       <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" /></div>
       <button class="btn-primary" id="loginBtn" onclick="doLogin()">Sign In</button>
       <div class="err-msg" id="loginErr"></div>
-      <div class="auth-switch">No account? <a onclick="showSignup()">Create one</a></div>
+      <div class="auth-switch">No account? <a onclick="showSignup()">Create one</a> &nbsp;·&nbsp; <a onclick="showForgot()">Forgot password?</a></div>
+    </div>
+
+    <!-- Update Password (after reset link) -->
+    <div class="auth-card" id="updatePasswordCard" style="display:none">
+      <div class="auth-title">New Password</div>
+      <div style="font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:20px">Enter your new password below.</div>
+      <div class="field"><label>New Password</label><input type="password" id="newPassword" placeholder="min 6 characters" /></div>
+      <div class="field"><label>Confirm Password</label><input type="password" id="confirmPassword" placeholder="repeat password" /></div>
+      <button class="btn-primary" id="updatePwBtn" onclick="doUpdatePassword()">Update Password</button>
+      <div class="err-msg" id="updatePwErr"></div>
+    </div>
+      <div class="auth-title">Reset Password</div>
+      <div style="font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:20px">Enter your email and we'll send you a reset link.</div>
+      <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="you@email.com" /></div>
+      <button class="btn-primary" id="forgotBtn" onclick="doForgot()">Send Reset Link</button>
+      <div class="err-msg" id="forgotErr"></div>
+      <div class="auth-switch"><a onclick="showLogin()">← Back to sign in</a></div>
     </div>
 
     <!-- Signup -->
@@ -858,9 +875,53 @@
     document.getElementById('signupCard').style.display = 'block';
   }
 
+  function showForgot() {
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('signupCard').style.display = 'none';
+    document.getElementById('forgotCard').style.display = 'block';
+  }
+
   function showLogin() {
     document.getElementById('signupCard').style.display = 'none';
+    document.getElementById('forgotCard').style.display = 'none';
     document.getElementById('loginCard').style.display = 'block';
+  }
+
+  async function doForgot() {
+    const email = document.getElementById('forgotEmail').value.trim();
+    const err   = document.getElementById('forgotErr');
+    const btn   = document.getElementById('forgotBtn');
+    if (!email) { err.textContent = 'Please enter your email.'; return; }
+    btn.disabled = true; btn.textContent = 'Sending...';
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname + '?reset=true'
+    });
+    if (error) {
+      err.textContent = error.message;
+      btn.disabled = false; btn.textContent = 'Send Reset Link';
+    } else {
+      err.style.color = 'var(--accent)';
+      err.textContent = 'Reset link sent! Check your email.';
+      btn.disabled = false; btn.textContent = 'Send Reset Link';
+    }
+  }
+
+  async function doUpdatePassword() {
+    const newPw  = document.getElementById('newPassword').value;
+    const confPw = document.getElementById('confirmPassword').value;
+    const err    = document.getElementById('updatePwErr');
+    const btn    = document.getElementById('updatePwBtn');
+    if (newPw.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+    if (newPw !== confPw) { err.textContent = 'Passwords do not match.'; return; }
+    btn.disabled = true; btn.textContent = 'Updating...';
+    const { error } = await sb.auth.updateUser({ password: newPw });
+    if (error) {
+      err.textContent = error.message;
+      btn.disabled = false; btn.textContent = 'Update Password';
+    } else {
+      err.style.color = 'var(--accent)';
+      err.textContent = 'Password updated! Signing you in...';
+    }
   }
 
   async function doLogin() {
@@ -892,10 +953,25 @@
     if (existing) { err.textContent = 'Username already taken.'; btn.disabled = false; btn.textContent = 'Create Account'; return; }
 
     const { data, error } = await sb.auth.signUp({ email, password: pass });
-    if (error) { err.textContent = error.message; btn.disabled = false; btn.textContent = 'Create Account'; return; }
+    if (error) {
+      if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('already exists')) {
+        err.textContent = 'An account with this email already exists. Please sign in instead.';
+      } else {
+        err.textContent = error.message;
+      }
+      btn.disabled = false; btn.textContent = 'Create Account'; return;
+    }
 
     // Create profile
-    await sb.from('profiles').insert({ id: data.user.id, username });
+    const { error: profileErr } = await sb.from('profiles').insert({ id: data.user.id, username });
+    if (profileErr) {
+      if (profileErr.code === '23505') {
+        err.textContent = 'An account with this email already exists. Please sign in instead.';
+      } else {
+        err.textContent = 'Account created but profile setup failed. Please sign in.';
+      }
+      btn.disabled = false; btn.textContent = 'Create Account'; return;
+    }
   }
 
   async function doLogout() {
@@ -1195,6 +1271,14 @@
 
   // ── Auth state listener ──
   sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      // Show update password form
+      document.getElementById('loginCard').style.display = 'none';
+      document.getElementById('signupCard').style.display = 'none';
+      document.getElementById('forgotCard').style.display = 'none';
+      document.getElementById('updatePasswordCard').style.display = 'block';
+      return;
+    }
     if (session?.user) {
       await bootstrap(session.user);
     }

@@ -979,6 +979,17 @@
       }
       btn.disabled = false; btn.textContent = 'Create Account'; return;
     }
+
+    // Success — show message then redirect to login
+    err.style.color = 'var(--accent)';
+    err.textContent = '✓ Account created! Check your email to confirm, then sign in.';
+    btn.textContent = 'Done!';
+    setTimeout(() => {
+      err.style.color = '';
+      err.textContent = '';
+      showLogin();
+      document.getElementById('loginEmail').value = email;
+    }, 3000);
   }
 
   async function doLogout() {

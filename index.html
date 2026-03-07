@@ -992,7 +992,18 @@
 const { createClient } = supabase;
 const sb = createClient(
   'https://vtlivesjwzinffceeriv.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA',
+  {
+    auth: {
+      persistSession: true,
+      detectSessionInUrl: true,
+      autoRefreshToken: true,
+      lock: async (name, acquireTimeout, fn) => {
+        // Skip locking entirely to avoid deadlocks
+        return fn();
+      }
+    }
+  }
 );
 
 // ══════════════════════════════════════

@@ -292,9 +292,9 @@ async function bootstrap(user) {
   }
 }
 
-// Fallback: if onAuthStateChange never fires, check session directly
 sb.auth.getSession().then(({ data: { session } }) => {
-  if (session?.user && !_user) bootstrap(session.user);
+  if (!session?.user) { window.location.href = 'index.html'; return; }
+  if (!_user) bootstrap(session.user);
 });
 
 // ── Pull open session from DB and start ticking if found ──

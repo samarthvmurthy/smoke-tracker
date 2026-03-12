@@ -283,9 +283,13 @@ async function bootstrap(user) {
   console.log(`HI ${user.email} (ID: ${user.id})`);
   try {
     // Load profile
-    const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    console.log('Bootstrap: querying profile...');
+    const profileQuery = sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Profile query timed out after 5s')), 5000));
+    const { data:profile, error:profileErr } = await Promise.race([profileQuery, timeout]);
+    console.log('Bootstrap: profile result', { profile, profileErr });
     _profile = profile;
-    console.log("PROFILE", profile)
+    document.getElementById('navUser').textContent = profile?.username || user.email;
     document.getElementById('navUser').textContent = profile?.username || user.email;
 
     // Pull open session from DB (end_time IS NULL)

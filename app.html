@@ -280,6 +280,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
 // ── Bootstrap: pull everything from DB ──
 async function bootstrap(user) {
   _user = user;
+  console.log("HI")
   try {
     // Load profile
     const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();

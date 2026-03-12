@@ -242,6 +242,7 @@ let _profile     = null;
 let _openSession = null;  // the current open DB session row
 let _tickInterval  = null;
 let _friendTimers  = {};
+let _lbTimers      = {};
 
 // ── Helpers ──
 const fmtDuration = ms => {
@@ -632,12 +633,11 @@ async function loadLeaderboard() {
 
   const entries=[];
   for (const p of (profiles||[])) {
-    // Open session → resistance is measured from start_time
     const { data:open } = await sb.from('sessions').select('start_time').eq('user_id',p.id).is('end_time',null).order('start_time',{ascending:false}).limit(1);
-    // Last closed session → if no open session, measure from last end_time
     const { data:last } = await sb.from('sessions').select('end_time').eq('user_id',p.id).not('end_time','is',null).order('end_time',{ascending:false}).limit(1);
-    const sinceTs = open&&open.length>0 ? open[0].start_time : last&&last.length>0 ? last[0].end_time : null;
-    entries.push({ id:p.id, username:p.username, elapsed:sinceTs?Date.now()-sinceTs:0, sinceTs });
+    const isActive = open&&open.length>0;
+    const sinceTs  = isActive ? open[0].start_time : last&&last.length>0 ? last[0].end_time : null;
+    entries.push({ id:p.id, username:p.username, elapsed:sinceTs?Date.now()-sinceTs:0, sinceTs, isActive });
   }
 
   entries.sort((a,b) => b.elapsed - a.elapsed);
@@ -650,10 +650,20 @@ async function loadLeaderboard() {
         <div class="lb-sub">${e.id===_user.id?'you':'friend'}</div>
       </div>
       <div class="lb-time">
-        <div class="lb-dur">${fmtShort(e.elapsed)}</div>
+        <div class="lb-dur" id="lb-dur-${e.id}">${fmtShort(e.elapsed)}</div>
         <div class="lb-since">${e.sinceTs?'since '+fmtDate(e.sinceTs):'no data'}</div>
       </div>
     </div>`).join('');
+
+  // Tick only active sessions
+  Object.values(_lbTimers).forEach(clearInterval); _lbTimers={};
+  entries.forEach(e => {
+    if (!e.isActive || !e.sinceTs) return;
+    _lbTimers[e.id] = setInterval(() => {
+      const el = document.getElementById(`lb-dur-${e.id}`);
+      if (el) el.textContent = fmtShort(Date.now() - e.sinceTs);
+    }, 1000);
+  });
 }
 
 // ── TABS ──
@@ -662,6 +672,7 @@ function switchTab(name) {
     document.getElementById(`tab-${t}`).classList.toggle('active', t===name);
     document.getElementById(`panel-${t}`).classList.toggle('active', t===name);
   });
+  if (name!=='leaderboard') { Object.values(_lbTimers).forEach(clearInterval); _lbTimers={}; }
   if (name==='friends')     loadFriends();
   if (name==='leaderboard') loadLeaderboard();
 }
@@ -670,7 +681,8 @@ function switchTab(name) {
 async function doLogout() {
   clearInterval(_tickInterval);
   Object.values(_friendTimers).forEach(clearInterval);
-  _user=null; _profile=null; _openSession=null; _friendTimers={};
+  Object.values(_lbTimers).forEach(clearInterval);
+  _user=null; _profile=null; _openSession=null; _friendTimers={}; _lbTimers={};
   try { await Promise.race([sb.auth.signOut(), new Promise(r=>setTimeout(r,3000))]); } catch{}
   window.location.href='index.html';
 }

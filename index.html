@@ -139,7 +139,9 @@ function setMsg(id, text, type) {
   if(el){el.textContent=text;el.className=`msg ${type||''}`;}
 }
 
-let inPasswordRecovery = false;
+// Detect recovery token in URL before any auth events fire
+let inPasswordRecovery = window.location.hash.includes('type=recovery');
+if (inPasswordRecovery) show('cardUpdatePw');
 
 sb.auth.onAuthStateChange((event, session) => {
   if (event==='PASSWORD_RECOVERY') { inPasswordRecovery=true; show('cardUpdatePw'); return; }

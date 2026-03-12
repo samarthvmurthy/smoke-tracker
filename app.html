@@ -268,48 +268,26 @@ function setStatus(msg, color) {
 }
 
 // ── Auth guard ──
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
-    window.location.href = 'index.html'; return;
-  }
-  if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN') && session?.user) {
-    await bootstrap(session.user);
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') {
+    window.location.href = 'index.html';
   }
 });
 
 // ── Bootstrap: pull everything from DB ──
 async function bootstrap(user) {
   _user = user;
-  console.log(`HI ${user.email} (ID: ${user.id})`);
   try {
-    // Load profile
-    console.log('Bootstrap: querying profile...');
-    const profileQuery = sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Profile query timed out after 5s')), 5000));
-    const { data:profile, error:profileErr } = await Promise.race([profileQuery, timeout]);
-    console.log('Bootstrap: profile result', { profile, profileErr });
+    const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
     _profile = profile;
     document.getElementById('navUser').textContent = profile?.username || user.email;
-    document.getElementById('navUser').textContent = profile?.username || user.email;
 
-    // Pull open session from DB (end_time IS NULL)
-    console.log('Bootstrap: syncing timer...');
     await syncTimerFromDB();
-    console.log('Bootstrap: timer synced, open session =', _openSession);
-
-    // Load log
-    console.log('Bootstrap: loading log...');
     await loadLog();
-    console.log('Bootstrap: log loaded');
-
-    // Check friend requests badge
-    console.log('Bootstrap: checking incoming requests...');
     await checkIncomingRequests();
-    console.log('Bootstrap: done');
   } catch(e) {
     console.error('Bootstrap error:', e);
   } finally {
-    // Always hide loading screen, even if something failed
     document.getElementById('loadingScreen').style.display = 'none';
   }
 }
@@ -321,8 +299,7 @@ sb.auth.getSession().then(({ data: { session } }) => {
 
 // ── Pull open session from DB and start ticking if found ──
 async function syncTimerFromDB() {
-  console.log('syncTimerFromDB: querying sessions...');
-  const { data:open, error:openErr } = await sb
+  const { data:open } = await sb
     .from('sessions')
     .select('*')
     .eq('user_id', _user.id)
@@ -330,7 +307,6 @@ async function syncTimerFromDB() {
     .order('start_time', { ascending: false })
     .limit(1);
 
-  console.log('syncTimerFromDB: result', { open, openErr });
   clearInterval(_tickInterval);
 
   if (open && open.length > 0) {

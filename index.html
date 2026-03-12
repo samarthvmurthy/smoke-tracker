@@ -139,9 +139,11 @@ function setMsg(id, text, type) {
   if(el){el.textContent=text;el.className=`msg ${type||''}`;}
 }
 
-// If already logged in, go straight to app
+let inPasswordRecovery = false;
+
 sb.auth.onAuthStateChange((event, session) => {
-  if (event==='PASSWORD_RECOVERY') { show('cardUpdatePw'); return; }
+  if (event==='PASSWORD_RECOVERY') { inPasswordRecovery=true; show('cardUpdatePw'); return; }
+  if (inPasswordRecovery) return;
   if ((event==='SIGNED_IN'||event==='INITIAL_SESSION') && session?.user) {
     window.location.href='app.html';
   }
@@ -211,7 +213,11 @@ async function doUpdatePassword() {
   btn.disabled=true; btn.textContent='Updating...';
   const {error}=await sb.auth.updateUser({password:newPw});
   if(error){setMsg('updatePwMsg',error.message,'error');btn.disabled=false;btn.textContent='Update Password';}
-  else{setMsg('updatePwMsg','✓ Password updated! Redirecting...','success');setTimeout(()=>window.location.href='app.html',1500);}
+  else{
+    setMsg('updatePwMsg','✓ Password updated! Please sign in.','success');
+    await sb.auth.signOut();
+    setTimeout(()=>show('cardLogin'),2000);
+  }
 }
 </script>
 </body>

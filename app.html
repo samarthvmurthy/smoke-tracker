@@ -6,6 +6,7 @@
 <title>Smoke Free</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
 <style>
   :root {
@@ -148,7 +149,7 @@
 <div id="loadingScreen">LOADING...</div>
 
 <nav class="nav">
-  <div class="nav-logo">SF</div>
+  <div class="nav-logo"><i class="fa-solid fa-ban-smoking"></i> SF</div>
   <div class="nav-right">
     <span>@<span id="navUser" class="nav-user">—</span></span>
     <button class="btn-ghost" onclick="doLogout()">Sign out</button>
@@ -172,7 +173,7 @@
       <div class="timer-controls">
         <button class="ctrl-btn btn-start"  id="btnStart"  onclick="startTimer()">▶ Start</button>
         <button class="ctrl-btn btn-stop"   id="btnStop"   onclick="stopTimer()"      disabled>■ Stop</button>
-        <button class="ctrl-btn btn-smoked" id="btnSmoked" onclick="openSmokeModal()" disabled>🚬 Smoked</button>
+        <button class="ctrl-btn btn-smoked" id="btnSmoked" onclick="openSmokeModal()" disabled><i class="fa-solid fa-ban-smoking"></i> Smoked</button>
       </div>
       <div class="status-msg" id="statusMsg"></div>
     </div>
@@ -217,7 +218,7 @@
 <!-- Smoke modal -->
 <div class="overlay" id="smokeOverlay">
   <div class="modal">
-    <div class="modal-icon">🚬</div>
+    <div class="modal-icon"><i class="fa-solid fa-ban-smoking"></i></div>
     <h2>Log a smoke?</h2>
     <p>Records your resistance time, resets and continues the timer.</p>
     <div class="modal-time" id="modalTime">—</div>

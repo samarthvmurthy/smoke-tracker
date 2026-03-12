@@ -280,24 +280,32 @@ sb.auth.onAuthStateChange(async (event, session) => {
 // ── Bootstrap: pull everything from DB ──
 async function bootstrap(user) {
   _user = user;
+  try {
+    // Load profile
+    const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    _profile = profile;
+    document.getElementById('navUser').textContent = profile?.username || user.email;
 
-  // Load profile
-  const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
-  _profile = profile;
-  document.getElementById('navUser').textContent = profile?.username || user.email;
+    // Pull open session from DB (end_time IS NULL)
+    await syncTimerFromDB();
 
-  // Pull open session from DB (end_time IS NULL)
-  await syncTimerFromDB();
+    // Load log
+    await loadLog();
 
-  // Load log
-  await loadLog();
-
-  // Check friend requests badge
-  await checkIncomingRequests();
-
-  // Hide loading screen
-  document.getElementById('loadingScreen').style.display = 'none';
+    // Check friend requests badge
+    await checkIncomingRequests();
+  } catch(e) {
+    console.error('Bootstrap error:', e);
+  } finally {
+    // Always hide loading screen, even if something failed
+    document.getElementById('loadingScreen').style.display = 'none';
+  }
 }
+
+// Fallback: if onAuthStateChange never fires, check session directly
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session?.user && !_user) bootstrap(session.user);
+});
 
 // ── Pull open session from DB and start ticking if found ──
 async function syncTimerFromDB() {

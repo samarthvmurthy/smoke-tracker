@@ -693,6 +693,20 @@ async function doLogout() {
 document.getElementById('smokeOverlay').addEventListener('click', e => {
   if (e.target===document.getElementById('smokeOverlay')) closeSmokeModal();
 });
+
+document.fonts.ready.then(() => {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(32,32,32,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#c8f560';
+  ctx.font = '900 38px "Font Awesome 6 Free"';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('\uf54d', 32, 34);
+  const link = document.querySelector("link[rel~='icon']");
+  if (link) link.href = c.toDataURL();
+});
 </script>
 </body>
 </html>

@@ -146,9 +146,15 @@ function setMsg(id, text, type) {
 let inPasswordRecovery = window.location.hash.includes('type=recovery');
 if (inPasswordRecovery) show('cardUpdatePw');
 
+// Prevent the auth listener from redirecting while doSignup() is still
+// inserting the profile row. Without this flag, signUp() (with confirm email OFF)
+// immediately fires SIGNED_IN, which navigates away and aborts the INSERT.
+let _creatingProfile = false;
+
 sb.auth.onAuthStateChange((event, session) => {
   if (event==='PASSWORD_RECOVERY') { inPasswordRecovery=true; show('cardUpdatePw'); return; }
   if (inPasswordRecovery) return;
+  if (_creatingProfile) return;
   if ((event==='SIGNED_IN'||event==='INITIAL_SESSION') && session?.user) {
     window.location.href='app.html';
   }
@@ -182,14 +188,27 @@ async function doSignup() {
   const {data:existing}=await sb.from('profiles').select('id').eq('username',username).maybeSingle();
   if(existing){setMsg('signupMsg','Username already taken.','error');btn.disabled=false;btn.textContent='Create Account';return;}
 
+  // Block the auth listener from redirecting until the profile row is inserted.
+  _creatingProfile = true;
   const {data,error}=await sb.auth.signUp({email,password:pass});
   if(error){
+    _creatingProfile = false;
     setMsg('signupMsg',error.message.toLowerCase().includes('already')?'An account with this email already exists. Please sign in.':error.message,'error');
     btn.disabled=false;btn.textContent='Create Account';return;
   }
   if(data.user){
     const {error:pErr}=await sb.from('profiles').insert({id:data.user.id,username});
-    if(pErr&&pErr.code!=='23505'){setMsg('signupMsg','Account created but profile failed. Please sign in.','error');btn.disabled=false;btn.textContent='Create Account';return;}
+    if(pErr&&pErr.code!=='23505'){
+      _creatingProfile = false;
+      setMsg('signupMsg','Account created but profile failed. Please sign in.','error');btn.disabled=false;btn.textContent='Create Account';return;
+    }
+  }
+  _creatingProfile = false;
+  // If confirm email is OFF, Supabase immediately signs the user in (data.session exists).
+  // Redirect straight to the app — no need to ask them to check email.
+  if(data.session) {
+    window.location.href='app.html';
+    return;
   }
   setMsg('signupMsg','✓ Account created! Check your email to confirm, then sign in.','success');
   btn.textContent='Done!';

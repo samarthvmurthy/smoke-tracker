@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Smoke Free</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -18,17 +18,18 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; display:flex; flex-direction:column; }
   body::after {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:9998;
+    content:''; position:fixed; top:0; right:0; bottom:0; left:0; pointer-events:none; z-index:9998;
     background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
   #loadingScreen {
-    position:fixed; inset:0; background:var(--bg); z-index:999;
+    position:fixed; top:0; right:0; bottom:0; left:0; background:var(--bg); z-index:999;
     display:flex; align-items:center; justify-content:center;
     font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:6px; color:var(--muted2);
   }
   .nav {
     display:flex; align-items:center; justify-content:space-between;
-    padding:0 24px; height:54px; border-bottom:1px solid var(--border);
+    padding:0 24px; padding-left:max(24px, env(safe-area-inset-left)); padding-right:max(24px, env(safe-area-inset-right));
+    height:54px; border-bottom:1px solid var(--border);
     background:var(--surface); position:sticky; top:0; z-index:100;
   }
   .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:5px; color:var(--accent); }
@@ -36,11 +37,11 @@
   .nav-user { color:var(--text); letter-spacing:1px; }
   .btn-ghost { background:none; border:1px solid var(--border2); color:var(--muted2); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:6px 12px; border-radius:2px; cursor:pointer; transition:all 0.2s; }
   .btn-ghost:hover { border-color:var(--muted2); color:var(--text); }
-  .tabs { display:flex; border-bottom:1px solid var(--border); background:var(--surface); padding:0 24px; overflow-x:auto; }
+  .tabs { display:flex; border-bottom:1px solid var(--border); background:var(--surface); padding:0 24px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .tab { padding:12px 20px; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted2); cursor:pointer; border-bottom:2px solid transparent; border-top:none; border-left:none; border-right:none; background:none; font-family:'DM Mono',monospace; transition:all 0.2s; white-space:nowrap; }
   .tab:hover { color:var(--text); }
   .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-  .content { flex:1; padding:28px 24px 60px; max-width:580px; width:100%; margin:0 auto; }
+  .content { flex:1; padding:28px 24px 60px; padding-bottom:max(60px, calc(60px + env(safe-area-inset-bottom))); max-width:580px; width:100%; margin:0 auto; }
   .panel { display:none; }
   .panel.active { display:block; animation:fadeUp 0.3s ease both; }
 
@@ -82,7 +83,7 @@
 
   /* Friends */
   .add-row { display:flex; gap:10px; margin-bottom:8px; }
-  .add-row input { flex:1; background:#0a0a0a; border:1px solid var(--border2); border-radius:2px; padding:10px 14px; color:var(--text); font-family:'DM Mono',monospace; font-size:12px; outline:none; transition:border-color 0.2s; }
+  .add-row input { flex:1; background:#0a0a0a; border:1px solid var(--border2); border-radius:2px; padding:10px 14px; color:var(--text); font-family:'DM Mono',monospace; font-size:16px; outline:none; transition:border-color 0.2s; -webkit-appearance:none; appearance:none; }
   .add-row input:focus { border-color:var(--accent-dim); }
   .add-row input::placeholder { color:var(--muted2); opacity:0.5; }
   .btn-sm { padding:10px 18px; background:var(--accent); color:#080808; border:none; font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; cursor:pointer; border-radius:2px; transition:opacity 0.2s; white-space:nowrap; }
@@ -120,7 +121,7 @@
   .lb-since{ font-size:9px; color:var(--muted2); letter-spacing:1px; margin-top:2px; }
 
   /* Modal */
-  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; z-index:500; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+  .overlay { position:fixed; top:0; right:0; bottom:0; left:0; background:rgba(0,0,0,0.88); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; z-index:500; opacity:0; pointer-events:none; transition:opacity 0.2s; }
   .overlay.active { opacity:1; pointer-events:all; }
   .modal { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:32px; max-width:340px; width:90%; text-align:center; transform:scale(0.95); transition:transform 0.2s; position:relative; }
   .modal::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
@@ -352,6 +353,16 @@ async function startTimer() {
   if (_openSession) return;
   document.getElementById('btnStart').disabled = true;
   setStatus('Starting...');
+
+  // iOS Safari can silently lose the auth token (bfcache, background suspension,
+  // ITP storage clearing). Re-validate the session before every insert so the
+  // SDK auto-refreshes an expired token instead of failing with an RLS error.
+  const { data: { session }, error: sessionErr } = await sb.auth.getSession();
+  if (sessionErr || !session?.user) {
+    window.location.href = 'index.html';
+    return;
+  }
+  _user = session.user; // keep reference fresh
 
   const now = Date.now();
   const { data, error } = await sb.from('sessions').insert({
@@ -692,6 +703,18 @@ async function doLogout() {
 // Close modal on backdrop click
 document.getElementById('smokeOverlay').addEventListener('click', e => {
   if (e.target===document.getElementById('smokeOverlay')) closeSmokeModal();
+});
+
+// iOS Safari restores pages from bfcache (back-forward cache) without re-running
+// scripts, leaving the Supabase auth token stale. Re-check the session whenever
+// the page becomes visible again via bfcache navigation.
+window.addEventListener('pageshow', async (event) => {
+  if (event.persisted) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.user) {
+      window.location.href = 'index.html';
+    }
+  }
 });
 
 document.fonts.ready.then(() => {

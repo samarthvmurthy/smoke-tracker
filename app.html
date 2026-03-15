@@ -142,6 +142,54 @@
   .btn-cancel:hover { border-color:var(--muted2); color:var(--text); }
   .loading { text-align:center; padding:32px; font-size:11px; letter-spacing:3px; color:var(--muted2); text-transform:uppercase; }
 
+  /* Avatar & Dropdown */
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:opacity 0.2s; flex-shrink:0; }
+  .avatar:hover { opacity:0.82; }
+  .nav-dropdown-wrap { position:relative; }
+  .nav-dropdown { position:absolute; top:calc(100% + 12px); right:0; width:250px; background:var(--surface); border:1px solid var(--border); border-radius:4px; box-shadow:0 12px 40px rgba(0,0,0,0.6); z-index:300; opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity 0.15s, transform 0.15s; }
+  .nav-dropdown.open { opacity:1; pointer-events:all; transform:translateY(0); }
+  .nav-dropdown::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); border-radius:4px 4px 0 0; }
+  .dd-profile { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+  .dd-avatar-lg { width:44px; height:44px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .dd-info { overflow:hidden; }
+  .dd-username { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dd-email { font-size:10px; color:var(--muted2); letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px; }
+  .dd-menu { padding:8px 0; }
+  .dd-item { display:flex; align-items:center; gap:12px; padding:11px 20px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted2); cursor:pointer; transition:all 0.15s; border:none; background:none; width:100%; text-align:left; font-family:'DM Mono',monospace; }
+  .dd-item:hover { color:var(--text); background:rgba(255,255,255,0.03); }
+  .dd-item.danger:hover { color:var(--danger); background:rgba(255,68,85,0.04); }
+  .dd-item i { width:16px; text-align:center; font-size:12px; }
+  .dd-divider { border:none; border-top:1px solid var(--border); margin:6px 0; }
+
+  /* Settings Modal */
+  .settings-overlay { position:fixed; top:0; right:0; bottom:0; left:0; background:rgba(0,0,0,0.92); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); z-index:400; opacity:0; pointer-events:none; transition:opacity 0.2s; display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:40px 16px; }
+  .settings-overlay.active { opacity:1; pointer-events:all; }
+  .settings-modal { background:var(--surface); border:1px solid var(--border); border-radius:4px; width:100%; max-width:480px; position:relative; margin:auto; }
+  .settings-modal::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); border-radius:4px 4px 0 0; }
+  .settings-header { padding:22px 28px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .settings-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:4px; color:var(--accent); }
+  .settings-close { background:none; border:none; color:var(--muted2); cursor:pointer; font-size:18px; padding:4px 6px; transition:color 0.2s; line-height:1; }
+  .settings-close:hover { color:var(--text); }
+  .settings-body { padding:28px; }
+  .settings-section { margin-bottom:32px; }
+  .settings-section:last-child { margin-bottom:0; }
+  .settings-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted2); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .settings-field { margin-bottom:14px; }
+  .settings-field label { display:block; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted2); margin-bottom:6px; }
+  .settings-field input { width:100%; background:#0a0a0a; border:1px solid var(--border2); border-radius:2px; padding:11px 14px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; outline:none; transition:border-color 0.2s; -webkit-appearance:none; appearance:none; }
+  .settings-field input:focus { border-color:var(--accent-dim); }
+  .settings-row { display:flex; gap:10px; align-items:flex-end; }
+  .settings-row .settings-field { flex:1; margin-bottom:0; }
+  .settings-btn { padding:11px 22px; background:var(--accent); color:#080808; border:none; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; cursor:pointer; border-radius:2px; transition:opacity 0.2s; white-space:nowrap; }
+  .settings-btn:hover:not(:disabled) { opacity:0.88; }
+  .settings-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .settings-btn.danger-btn { background:transparent; color:var(--danger); border:1px solid rgba(255,68,85,0.4); }
+  .settings-btn.danger-btn:hover { background:var(--danger); color:#080808; opacity:1; }
+  .settings-msg { font-size:11px; margin-top:10px; min-height:16px; letter-spacing:0.5px; line-height:1.6; }
+  .settings-msg.error { color:var(--danger); }
+  .settings-msg.success { color:var(--success); }
+  .danger-zone-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--danger); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid rgba(255,68,85,0.25); }
+
   @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
   @keyframes pulse {
     0%,100%{text-shadow:0 0 60px rgba(200,245,96,0.12)}
@@ -157,8 +205,23 @@
 <nav class="nav">
   <div class="nav-logo"><i class="fa-solid fa-ban-smoking"></i> SMOKE FREE</div>
   <div class="nav-right">
-    <span>@<span id="navUser" class="nav-user">—</span></span>
-    <button class="btn-ghost" onclick="doLogout()">Sign out</button>
+    <div class="nav-dropdown-wrap" id="avatarWrap">
+      <div class="avatar" id="navAvatar" onclick="toggleDropdown()">?</div>
+      <div class="nav-dropdown" id="navDropdown">
+        <div class="dd-profile">
+          <div class="dd-avatar-lg" id="ddAvatarLg">?</div>
+          <div class="dd-info">
+            <div class="dd-username" id="ddUsername">—</div>
+            <div class="dd-email" id="ddEmail">—</div>
+          </div>
+        </div>
+        <div class="dd-menu">
+          <button class="dd-item" onclick="openSettings()"><i class="fa-solid fa-gear"></i>Settings</button>
+          <hr class="dd-divider">
+          <button class="dd-item danger" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sign Out</button>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -238,6 +301,70 @@
   </div>
 </div>
 
+<!-- Settings modal -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-modal">
+    <div class="settings-header">
+      <div class="settings-title">Settings</div>
+      <button class="settings-close" onclick="closeSettings()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="settings-body">
+
+      <!-- Profile -->
+      <div class="settings-section">
+        <div class="settings-section-title">Profile</div>
+        <div class="settings-row">
+          <div class="settings-field">
+            <label>Username</label>
+            <input type="text" id="setUsername" placeholder="new_username" maxlength="30" autocomplete="off" />
+          </div>
+          <button class="settings-btn" id="setUsernameBtn" onclick="saveUsername()">Save</button>
+        </div>
+        <div class="settings-msg" id="setUsernameMsg"></div>
+      </div>
+
+      <!-- Account Security -->
+      <div class="settings-section">
+        <div class="settings-section-title">Account Security</div>
+        <div class="settings-field">
+          <label>New Email Address</label>
+          <input type="email" id="setEmail" placeholder="new@email.com" maxlength="254" />
+        </div>
+        <button class="settings-btn" id="setEmailBtn" onclick="saveEmail()">Update Email</button>
+        <div class="settings-msg" id="setEmailMsg"></div>
+
+        <div style="margin-top:28px">
+          <div class="settings-field">
+            <label>Current Password</label>
+            <input type="password" id="setCurPw" placeholder="••••••••" maxlength="128" />
+          </div>
+          <div class="settings-field">
+            <label>New Password</label>
+            <input type="password" id="setNewPw" placeholder="min 6 characters" maxlength="128" />
+          </div>
+          <div class="settings-field">
+            <label>Confirm New Password</label>
+            <input type="password" id="setConfirmPw" placeholder="repeat new password" maxlength="128" />
+          </div>
+          <button class="settings-btn" id="setPasswordBtn" onclick="savePassword()">Update Password</button>
+          <div class="settings-msg" id="setPasswordMsg"></div>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-section">
+        <div class="danger-zone-title">Danger Zone</div>
+        <p style="font-size:11px;color:var(--muted2);line-height:1.9;margin-bottom:16px">
+          Permanently deletes your profile, all sessions, and friend connections. This cannot be undone.
+        </p>
+        <button class="settings-btn danger-btn" onclick="deleteAccount()">Delete Account</button>
+        <div class="settings-msg" id="setDeleteMsg"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
 const SB_URL = 'https://vtlivesjwzinffceeriv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA';
@@ -293,7 +420,7 @@ async function bootstrap(user) {
   try {
     const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
     _profile = profile;
-    document.getElementById('navUser').textContent = profile?.username || user.email;
+    updateAvatar();
 
     await syncTimerFromDB();
     await loadLog();
@@ -736,6 +863,115 @@ function switchTab(name) {
   if (name!=='leaderboard') { Object.values(_lbTimers).forEach(clearInterval); _lbTimers={}; }
   if (name==='friends')     loadFriends();
   if (name==='leaderboard') loadLeaderboard();
+}
+
+// ── AVATAR & DROPDOWN ──
+function updateAvatar() {
+  const initial = (_profile?.username || _user?.email || '?')[0].toUpperCase();
+  document.getElementById('navAvatar').textContent    = initial;
+  document.getElementById('ddAvatarLg').textContent   = initial;
+  document.getElementById('ddUsername').textContent   = '@' + (_profile?.username || '—');
+  document.getElementById('ddEmail').textContent      = _user?.email || '—';
+}
+
+function toggleDropdown() {
+  document.getElementById('navDropdown').classList.toggle('open');
+}
+
+function closeDropdown() {
+  document.getElementById('navDropdown').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('avatarWrap').contains(e.target)) closeDropdown();
+});
+
+// ── SETTINGS ──
+function openSettings() {
+  closeDropdown();
+  document.getElementById('setUsername').value  = _profile?.username || '';
+  document.getElementById('setEmail').value     = '';
+  document.getElementById('setCurPw').value     = '';
+  document.getElementById('setNewPw').value     = '';
+  document.getElementById('setConfirmPw').value = '';
+  ['setUsernameMsg','setEmailMsg','setPasswordMsg','setDeleteMsg'].forEach(id => {
+    const el = document.getElementById(id); el.textContent=''; el.className='settings-msg';
+  });
+  document.getElementById('settingsOverlay').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+document.getElementById('settingsOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+});
+
+function setSettingsMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = `settings-msg ${type||''}`;
+}
+
+async function saveUsername() {
+  const val = document.getElementById('setUsername').value.trim().toLowerCase();
+  const btn = document.getElementById('setUsernameBtn');
+  if (!val) { setSettingsMsg('setUsernameMsg','Enter a username.','error'); return; }
+  if (!/^[a-z0-9_]+$/.test(val)) { setSettingsMsg('setUsernameMsg','Letters, numbers, underscores only.','error'); return; }
+  if (val === _profile?.username) { setSettingsMsg('setUsernameMsg','That\'s already your username.','error'); return; }
+  btn.disabled=true; btn.textContent='Saving...';
+  const { data:existing } = await sb.from('profiles').select('id').eq('username', val).maybeSingle();
+  if (existing) { setSettingsMsg('setUsernameMsg','Username already taken.','error'); btn.disabled=false; btn.textContent='Save'; return; }
+  const { error } = await sb.from('profiles').update({ username: val }).eq('id', _user.id);
+  btn.disabled=false; btn.textContent='Save';
+  if (error) { setSettingsMsg('setUsernameMsg','Failed to update. Try again.','error'); return; }
+  _profile.username = val;
+  updateAvatar();
+  setSettingsMsg('setUsernameMsg','✓ Username updated!','success');
+}
+
+async function saveEmail() {
+  const email = document.getElementById('setEmail').value.trim();
+  const btn   = document.getElementById('setEmailBtn');
+  if (!email) { setSettingsMsg('setEmailMsg','Enter a new email address.','error'); return; }
+  btn.disabled=true; btn.textContent='Sending...';
+  const { error } = await sb.auth.updateUser({ email });
+  btn.disabled=false; btn.textContent='Update Email';
+  if (error) { setSettingsMsg('setEmailMsg', error.message,'error'); return; }
+  setSettingsMsg('setEmailMsg','✓ Confirmation sent to new email. Click the link to confirm.','success');
+}
+
+async function savePassword() {
+  const curPw  = document.getElementById('setCurPw').value;
+  const newPw  = document.getElementById('setNewPw').value;
+  const confPw = document.getElementById('setConfirmPw').value;
+  const btn    = document.getElementById('setPasswordBtn');
+  if (!curPw||!newPw||!confPw) { setSettingsMsg('setPasswordMsg','Fill in all password fields.','error'); return; }
+  if (newPw.length < 6)        { setSettingsMsg('setPasswordMsg','New password must be at least 6 characters.','error'); return; }
+  if (newPw !== confPw)        { setSettingsMsg('setPasswordMsg','New passwords do not match.','error'); return; }
+  btn.disabled=true; btn.textContent='Updating...';
+  const { error:authErr } = await sb.auth.signInWithPassword({ email:_user.email, password:curPw });
+  if (authErr) { setSettingsMsg('setPasswordMsg','Current password is incorrect.','error'); btn.disabled=false; btn.textContent='Update Password'; return; }
+  const { error } = await sb.auth.updateUser({ password: newPw });
+  btn.disabled=false; btn.textContent='Update Password';
+  if (error) { setSettingsMsg('setPasswordMsg', error.message,'error'); return; }
+  document.getElementById('setCurPw').value='';
+  document.getElementById('setNewPw').value='';
+  document.getElementById('setConfirmPw').value='';
+  setSettingsMsg('setPasswordMsg','✓ Password updated successfully!','success');
+}
+
+async function deleteAccount() {
+  const confirmed = prompt('This will permanently delete your account and all data.\n\nType your username to confirm:');
+  if (confirmed === null) return;
+  if (confirmed !== _profile?.username) { setSettingsMsg('setDeleteMsg','Username did not match.','error'); return; }
+  setSettingsMsg('setDeleteMsg','Deleting account...','');
+  await sb.from('friendships').delete().or(`user_id.eq.${_user.id},friend_id.eq.${_user.id}`);
+  await sb.from('sessions').delete().eq('user_id', _user.id);
+  await sb.from('profiles').delete().eq('id', _user.id);
+  try { await sb.auth.signOut(); } catch {}
+  Object.keys(localStorage).filter(k=>k.startsWith('sb-')).forEach(k=>localStorage.removeItem(k));
+  window.location.href = 'index.html';
 }
 
 // ── LOGOUT ──

@@ -143,14 +143,14 @@
   .loading { text-align:center; padding:32px; font-size:11px; letter-spacing:3px; color:var(--muted2); text-transform:uppercase; }
 
   /* Avatar & Dropdown */
-  .avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:opacity 0.2s; flex-shrink:0; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:opacity 0.2s; flex-shrink:0; overflow:hidden; position:relative; }
   .avatar:hover { opacity:0.82; }
   .nav-dropdown-wrap { position:relative; }
   .nav-dropdown { position:absolute; top:calc(100% + 12px); right:0; width:250px; background:var(--surface); border:1px solid var(--border); border-radius:4px; box-shadow:0 12px 40px rgba(0,0,0,0.6); z-index:300; opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity 0.15s, transform 0.15s; }
   .nav-dropdown.open { opacity:1; pointer-events:all; transform:translateY(0); }
   .nav-dropdown::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); border-radius:4px 4px 0 0; }
   .dd-profile { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
-  .dd-avatar-lg { width:44px; height:44px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .dd-avatar-lg { width:44px; height:44px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; position:relative; }
   .dd-info { overflow:hidden; }
   .dd-username { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .dd-email { font-size:10px; color:var(--muted2); letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px; }
@@ -173,22 +173,37 @@
   .settings-body { padding:28px; }
   .settings-section { margin-bottom:32px; }
   .settings-section:last-child { margin-bottom:0; }
-  .settings-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted2); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .settings-section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .settings-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted2); }
+  .settings-edit-btn { background:none; border:1px solid var(--border2); color:var(--muted2); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .settings-edit-btn:hover { border-color:var(--accent-dim); color:var(--accent); }
   .settings-field { margin-bottom:14px; }
   .settings-field label { display:block; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted2); margin-bottom:6px; }
-  .settings-field input { width:100%; background:#0a0a0a; border:1px solid var(--border2); border-radius:2px; padding:11px 14px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; outline:none; transition:border-color 0.2s; -webkit-appearance:none; appearance:none; }
+  .settings-field input { width:100%; background:#0a0a0a; border:1px solid var(--border2); border-radius:2px; padding:11px 14px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; outline:none; transition:border-color 0.2s, background 0.2s, border 0.2s; -webkit-appearance:none; appearance:none; }
   .settings-field input:focus { border-color:var(--accent-dim); }
-  .settings-row { display:flex; gap:10px; align-items:flex-end; }
-  .settings-row .settings-field { flex:1; margin-bottom:0; }
+  .settings-field input:disabled { background:transparent; border-color:transparent; opacity:1; color:var(--text); cursor:default; padding-left:0; }
+  .settings-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
   .settings-btn { padding:11px 22px; background:var(--accent); color:#080808; border:none; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; cursor:pointer; border-radius:2px; transition:opacity 0.2s; white-space:nowrap; }
   .settings-btn:hover:not(:disabled) { opacity:0.88; }
   .settings-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .settings-btn.ghost { background:transparent; color:var(--muted2); border:1px solid var(--border2); }
+  .settings-btn.ghost:hover:not(:disabled) { border-color:var(--muted2); color:var(--text); opacity:1; }
   .settings-btn.danger-btn { background:transparent; color:var(--danger); border:1px solid rgba(255,68,85,0.4); }
   .settings-btn.danger-btn:hover { background:var(--danger); color:#080808; opacity:1; }
   .settings-msg { font-size:11px; margin-top:10px; min-height:16px; letter-spacing:0.5px; line-height:1.6; }
   .settings-msg.error { color:var(--danger); }
   .settings-msg.success { color:var(--success); }
   .danger-zone-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--danger); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid rgba(255,68,85,0.25); }
+  /* Avatar in settings */
+  .settings-avatar-wrap { display:flex; justify-content:center; margin-bottom:28px; }
+  .settings-avatar-circle { width:88px; height:88px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:40px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; cursor:default; transition:opacity 0.2s; }
+  .settings-avatar-circle.editable { cursor:pointer; }
+  .settings-avatar-circle.editable:hover { opacity:0.88; }
+  .settings-avatar-circle.editable:hover .settings-avatar-overlay { opacity:1; }
+  .settings-avatar-circle img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .settings-avatar-initial { position:relative; z-index:1; }
+  .settings-avatar-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.55); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; opacity:0; transition:opacity 0.2s; color:#fff; font-size:18px; pointer-events:none; z-index:2; }
+  .settings-avatar-overlay span { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; }
 
   @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
   @keyframes pulse {
@@ -206,10 +221,16 @@
   <div class="nav-logo"><i class="fa-solid fa-ban-smoking"></i> SMOKE FREE</div>
   <div class="nav-right">
     <div class="nav-dropdown-wrap" id="avatarWrap">
-      <div class="avatar" id="navAvatar" onclick="toggleDropdown()">?</div>
+      <div class="avatar" id="navAvatar" onclick="toggleDropdown()">
+        <img id="navAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        <span id="navAvatarInitial">?</span>
+      </div>
       <div class="nav-dropdown" id="navDropdown">
         <div class="dd-profile">
-          <div class="dd-avatar-lg" id="ddAvatarLg">?</div>
+          <div class="dd-avatar-lg" id="ddAvatarLg">
+            <img id="ddAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+            <span id="ddAvatarInitial">?</span>
+          </div>
           <div class="dd-info">
             <div class="dd-username" id="ddUsername">—</div>
             <div class="dd-email" id="ddEmail">—</div>
@@ -312,43 +333,58 @@
 
       <!-- Profile -->
       <div class="settings-section">
-        <div class="settings-section-title">Profile</div>
-        <div class="settings-row">
-          <div class="settings-field">
-            <label>Username</label>
-            <input type="text" id="setUsername" placeholder="new_username" maxlength="30" autocomplete="off" />
-          </div>
-          <button class="settings-btn" id="setUsernameBtn" onclick="saveUsername()">Save</button>
+        <div class="settings-section-header">
+          <div class="settings-section-title">Profile</div>
+          <button class="settings-edit-btn" id="profileEditBtn" onclick="enableEditMode()">Edit</button>
         </div>
-        <div class="settings-msg" id="setUsernameMsg"></div>
+
+        <!-- Avatar -->
+        <div class="settings-avatar-wrap">
+          <div class="settings-avatar-circle" id="settingsAvatarCircle" onclick="triggerAvatarUpload()">
+            <img id="settingsAvatarImg" style="display:none">
+            <span class="settings-avatar-initial" id="settingsAvatarInitial">?</span>
+            <div class="settings-avatar-overlay" id="settingsAvatarOverlay">
+              <i class="fa-solid fa-camera"></i>
+              <span>Change</span>
+            </div>
+          </div>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+        </div>
+
+        <div class="settings-field">
+          <label>Username</label>
+          <input type="text" id="setUsername" maxlength="30" autocomplete="off" disabled />
+        </div>
+        <div class="settings-field">
+          <label>Email Address</label>
+          <input type="email" id="setEmail" maxlength="254" disabled />
+        </div>
+        <div class="settings-msg" id="setProfileMsg"></div>
+        <div class="settings-actions" id="profileActions" style="display:none">
+          <button class="settings-btn ghost" onclick="cancelEditMode()">Cancel</button>
+          <button class="settings-btn" id="saveProfileBtn" onclick="saveProfile()">Save Changes</button>
+        </div>
       </div>
 
-      <!-- Account Security -->
+      <!-- Change Password -->
       <div class="settings-section">
-        <div class="settings-section-title">Account Security</div>
+        <div class="settings-section-header">
+          <div class="settings-section-title">Change Password</div>
+        </div>
         <div class="settings-field">
-          <label>New Email Address</label>
-          <input type="email" id="setEmail" placeholder="new@email.com" maxlength="254" />
+          <label>Current Password</label>
+          <input type="password" id="setCurPw" placeholder="••••••••" maxlength="128" />
         </div>
-        <button class="settings-btn" id="setEmailBtn" onclick="saveEmail()">Update Email</button>
-        <div class="settings-msg" id="setEmailMsg"></div>
-
-        <div style="margin-top:28px">
-          <div class="settings-field">
-            <label>Current Password</label>
-            <input type="password" id="setCurPw" placeholder="••••••••" maxlength="128" />
-          </div>
-          <div class="settings-field">
-            <label>New Password</label>
-            <input type="password" id="setNewPw" placeholder="min 6 characters" maxlength="128" />
-          </div>
-          <div class="settings-field">
-            <label>Confirm New Password</label>
-            <input type="password" id="setConfirmPw" placeholder="repeat new password" maxlength="128" />
-          </div>
-          <button class="settings-btn" id="setPasswordBtn" onclick="savePassword()">Update Password</button>
-          <div class="settings-msg" id="setPasswordMsg"></div>
+        <div class="settings-field">
+          <label>New Password</label>
+          <input type="password" id="setNewPw" placeholder="min 6 characters" maxlength="128" />
         </div>
+        <div class="settings-field">
+          <label>Confirm New Password</label>
+          <input type="password" id="setConfirmPw" placeholder="repeat new password" maxlength="128" />
+        </div>
+        <button class="settings-btn" id="setPasswordBtn" onclick="savePassword()">Update Password</button>
+        <div class="settings-msg" id="setPasswordMsg"></div>
       </div>
 
       <!-- Danger Zone -->
@@ -381,7 +417,11 @@ let _openSession = null;  // the current open DB session row
 let _tickInterval  = null;
 let _friendTimers  = {};
 let _lbTimers      = {};
-let _suggestTimer  = null;
+let _suggestTimer      = null;
+let _editMode          = false;
+let _pendingAvatarFile = null;
+let _origUsername      = '';
+let _origEmail         = '';
 
 // ── Helpers ──
 const fmtDuration = ms => {
@@ -867,11 +907,23 @@ function switchTab(name) {
 
 // ── AVATAR & DROPDOWN ──
 function updateAvatar() {
-  const initial = (_profile?.username || _user?.email || '?')[0].toUpperCase();
-  document.getElementById('navAvatar').textContent    = initial;
-  document.getElementById('ddAvatarLg').textContent   = initial;
-  document.getElementById('ddUsername').textContent   = '@' + (_profile?.username || '—');
-  document.getElementById('ddEmail').textContent      = _user?.email || '—';
+  const initial    = (_profile?.username || _user?.email || '?')[0].toUpperCase();
+  const avatarUrl  = _profile?.avatar_url || null;
+
+  // Nav avatar
+  const navImg  = document.getElementById('navAvatarImg');
+  const navInit = document.getElementById('navAvatarInitial');
+  if (avatarUrl) { navImg.src=avatarUrl; navImg.style.display='block'; navInit.style.display='none'; }
+  else           { navImg.style.display='none'; navInit.style.display='block'; navInit.textContent=initial; }
+
+  // Dropdown avatar
+  const ddImg  = document.getElementById('ddAvatarImg');
+  const ddInit = document.getElementById('ddAvatarInitial');
+  if (avatarUrl) { ddImg.src=avatarUrl; ddImg.style.display='block'; ddInit.style.display='none'; }
+  else           { ddImg.style.display='none'; ddInit.style.display='block'; ddInit.textContent=initial; }
+
+  document.getElementById('ddUsername').textContent = '@' + (_profile?.username || '—');
+  document.getElementById('ddEmail').textContent    = _user?.email || '—';
 }
 
 function toggleDropdown() {
@@ -889,18 +941,136 @@ document.addEventListener('click', e => {
 // ── SETTINGS ──
 function openSettings() {
   closeDropdown();
-  document.getElementById('setUsername').value  = _profile?.username || '';
-  document.getElementById('setEmail').value     = '';
+  _editMode = false;
+  _pendingAvatarFile = null;
+  _origUsername = _profile?.username || '';
+  _origEmail    = _user?.email || '';
+
+  // Populate fields
+  document.getElementById('setUsername').value  = _origUsername;
+  document.getElementById('setEmail').value     = _origEmail;
   document.getElementById('setCurPw').value     = '';
   document.getElementById('setNewPw').value     = '';
   document.getElementById('setConfirmPw').value = '';
-  ['setUsernameMsg','setEmailMsg','setPasswordMsg','setDeleteMsg'].forEach(id => {
-    const el = document.getElementById(id); el.textContent=''; el.className='settings-msg';
+
+  // Read-only state
+  document.getElementById('setUsername').disabled = true;
+  document.getElementById('setEmail').disabled    = true;
+  document.getElementById('profileEditBtn').style.display  = 'inline-block';
+  document.getElementById('profileActions').style.display  = 'none';
+  document.getElementById('settingsAvatarCircle').classList.remove('editable');
+
+  // Avatar
+  const avatarUrl = _profile?.avatar_url || null;
+  const img  = document.getElementById('settingsAvatarImg');
+  const init = document.getElementById('settingsAvatarInitial');
+  if (avatarUrl) { img.src=avatarUrl; img.style.display='block'; init.style.display='none'; }
+  else           { img.style.display='none'; init.style.display='block'; init.textContent=(_origUsername||'?')[0].toUpperCase(); }
+
+  ['setProfileMsg','setPasswordMsg','setDeleteMsg'].forEach(id => {
+    const el=document.getElementById(id); el.textContent=''; el.className='settings-msg';
   });
   document.getElementById('settingsOverlay').classList.add('active');
 }
 
+function enableEditMode() {
+  _editMode = true;
+  document.getElementById('setUsername').disabled = false;
+  document.getElementById('setEmail').disabled    = false;
+  document.getElementById('profileEditBtn').style.display = 'none';
+  document.getElementById('profileActions').style.display = 'flex';
+  document.getElementById('settingsAvatarCircle').classList.add('editable');
+  document.getElementById('setUsername').focus();
+}
+
+function cancelEditMode() {
+  _editMode = false;
+  _pendingAvatarFile = null;
+  document.getElementById('setUsername').value    = _origUsername;
+  document.getElementById('setEmail').value       = _origEmail;
+  document.getElementById('setUsername').disabled = true;
+  document.getElementById('setEmail').disabled    = true;
+  document.getElementById('profileEditBtn').style.display = 'inline-block';
+  document.getElementById('profileActions').style.display = 'none';
+  document.getElementById('settingsAvatarCircle').classList.remove('editable');
+  // Restore avatar preview
+  const avatarUrl = _profile?.avatar_url || null;
+  const img  = document.getElementById('settingsAvatarImg');
+  const init = document.getElementById('settingsAvatarInitial');
+  if (avatarUrl) { img.src=avatarUrl; img.style.display='block'; init.style.display='none'; }
+  else           { img.style.display='none'; init.style.display='block'; }
+  setSettingsMsg('setProfileMsg','','');
+}
+
+function triggerAvatarUpload() {
+  if (!_editMode) return;
+  document.getElementById('avatarFileInput').click();
+}
+
+function handleAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _pendingAvatarFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img  = document.getElementById('settingsAvatarImg');
+    const init = document.getElementById('settingsAvatarInitial');
+    img.src = e.target.result; img.style.display='block'; init.style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfile() {
+  const btn      = document.getElementById('saveProfileBtn');
+  const newUser  = document.getElementById('setUsername').value.trim().toLowerCase();
+  const newEmail = document.getElementById('setEmail').value.trim();
+  btn.disabled=true; btn.textContent='Saving...';
+
+  // Upload avatar if pending
+  if (_pendingAvatarFile) {
+    const { error:upErr } = await sb.storage.from('avatars').upload(_user.id, _pendingAvatarFile, { upsert:true, contentType:_pendingAvatarFile.type });
+    if (upErr) { setSettingsMsg('setProfileMsg','Failed to upload photo. Try again.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    const { data:urlData } = sb.storage.from('avatars').getPublicUrl(_user.id);
+    _profile.avatar_url = urlData.publicUrl + '?t=' + Date.now();
+    await sb.from('profiles').update({ avatar_url: _profile.avatar_url }).eq('id', _user.id);
+    _pendingAvatarFile = null;
+    updateAvatar();
+  }
+
+  // Update username
+  if (newUser !== _origUsername) {
+    if (!newUser) { setSettingsMsg('setProfileMsg','Username cannot be empty.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    if (!/^[a-z0-9_]+$/.test(newUser)) { setSettingsMsg('setProfileMsg','Username: letters, numbers, underscores only.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    const { data:existing } = await sb.from('profiles').select('id').eq('username', newUser).maybeSingle();
+    if (existing) { setSettingsMsg('setProfileMsg','Username already taken.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    const { error } = await sb.from('profiles').update({ username: newUser }).eq('id', _user.id);
+    if (error) { setSettingsMsg('setProfileMsg','Failed to update username.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    _profile.username = newUser;
+    _origUsername = newUser;
+    updateAvatar();
+  }
+
+  // Update email
+  if (newEmail !== _origEmail) {
+    const { error } = await sb.auth.updateUser({ email: newEmail });
+    if (error) { setSettingsMsg('setProfileMsg', error.message,'error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    setSettingsMsg('setProfileMsg','✓ Changes saved. Confirm new email in your inbox.','success');
+  } else {
+    setSettingsMsg('setProfileMsg','✓ Changes saved.','success');
+  }
+
+  btn.disabled=false; btn.textContent='Save Changes';
+  // Exit edit mode
+  document.getElementById('setUsername').disabled = true;
+  document.getElementById('setEmail').disabled    = true;
+  document.getElementById('profileEditBtn').style.display = 'inline-block';
+  document.getElementById('profileActions').style.display = 'none';
+  document.getElementById('settingsAvatarCircle').classList.remove('editable');
+  _editMode = false;
+}
+
 function closeSettings() {
+  if (_editMode) cancelEditMode();
   document.getElementById('settingsOverlay').classList.remove('active');
 }
 
@@ -911,34 +1081,6 @@ document.getElementById('settingsOverlay').addEventListener('click', e => {
 function setSettingsMsg(id, text, type) {
   const el = document.getElementById(id);
   el.textContent = text; el.className = `settings-msg ${type||''}`;
-}
-
-async function saveUsername() {
-  const val = document.getElementById('setUsername').value.trim().toLowerCase();
-  const btn = document.getElementById('setUsernameBtn');
-  if (!val) { setSettingsMsg('setUsernameMsg','Enter a username.','error'); return; }
-  if (!/^[a-z0-9_]+$/.test(val)) { setSettingsMsg('setUsernameMsg','Letters, numbers, underscores only.','error'); return; }
-  if (val === _profile?.username) { setSettingsMsg('setUsernameMsg','That\'s already your username.','error'); return; }
-  btn.disabled=true; btn.textContent='Saving...';
-  const { data:existing } = await sb.from('profiles').select('id').eq('username', val).maybeSingle();
-  if (existing) { setSettingsMsg('setUsernameMsg','Username already taken.','error'); btn.disabled=false; btn.textContent='Save'; return; }
-  const { error } = await sb.from('profiles').update({ username: val }).eq('id', _user.id);
-  btn.disabled=false; btn.textContent='Save';
-  if (error) { setSettingsMsg('setUsernameMsg','Failed to update. Try again.','error'); return; }
-  _profile.username = val;
-  updateAvatar();
-  setSettingsMsg('setUsernameMsg','✓ Username updated!','success');
-}
-
-async function saveEmail() {
-  const email = document.getElementById('setEmail').value.trim();
-  const btn   = document.getElementById('setEmailBtn');
-  if (!email) { setSettingsMsg('setEmailMsg','Enter a new email address.','error'); return; }
-  btn.disabled=true; btn.textContent='Sending...';
-  const { error } = await sb.auth.updateUser({ email });
-  btn.disabled=false; btn.textContent='Update Email';
-  if (error) { setSettingsMsg('setEmailMsg', error.message,'error'); return; }
-  setSettingsMsg('setEmailMsg','✓ Confirmation sent to new email. Click the link to confirm.','success');
 }
 
 async function savePassword() {

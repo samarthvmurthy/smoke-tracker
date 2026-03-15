@@ -221,7 +221,7 @@ async function doForgot() {
   if(!email){setMsg('forgotMsg','Please enter your email.','error');return;}
   btn.disabled=true; btn.textContent='Sending...';
   const {error}=await sb.auth.resetPasswordForEmail(email,{
-    redirectTo:'https://www.smokefreetimer.com/'
+    redirectTo:'https://samarthvmurthy.github.io/smoke-tracker/'
   });
   if(error) setMsg('forgotMsg',error.message,'error');
   else{setMsg('forgotMsg','✓ Reset link sent! Check your email.','success');setTimeout(()=>show('cardLogin'),4000);}

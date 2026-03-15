@@ -190,7 +190,7 @@ async function doSignup() {
 
   // Block the auth listener from redirecting until the profile row is inserted.
   _creatingProfile = true;
-  const {data,error}=await sb.auth.signUp({email,password:pass});
+  const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:'https://samarthvmurthy.github.io/smoke-tracker/'}});
   if(error){
     _creatingProfile = false;
     setMsg('signupMsg',error.message.toLowerCase().includes('already')?'An account with this email already exists. Please sign in.':error.message,'error');

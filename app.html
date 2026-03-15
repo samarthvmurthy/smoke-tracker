@@ -105,8 +105,13 @@
   .btn-accept:hover { opacity:0.88; }
   .btn-decline { padding:7px 14px; background:transparent; color:var(--muted2); border:1px solid var(--border2); font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; cursor:pointer; border-radius:2px; transition:all 0.2s; }
   .btn-decline:hover { border-color:var(--danger); color:var(--danger); }
-  .btn-remove  { background:none; border:none; color:var(--muted2); cursor:pointer; font-size:14px; padding:4px 8px; transition:color 0.2s; }
-  .btn-remove:hover { color:var(--danger); }
+  .btn-unfriend { padding:7px 16px; background:transparent; color:var(--muted2); border:1px solid var(--border2); font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; cursor:pointer; border-radius:2px; transition:all 0.2s; white-space:nowrap; }
+  .btn-unfriend:hover { border-color:var(--danger); color:var(--danger); }
+  .suggestions-wrap { flex:1; position:relative; }
+  .suggestions { position:absolute; top:100%; left:0; right:0; background:#0e0e0e; border:1px solid var(--border2); border-top:none; border-radius:0 0 2px 2px; z-index:200; max-height:220px; overflow-y:auto; }
+  .suggestion-item { padding:10px 14px; font-size:13px; cursor:pointer; color:var(--muted2); letter-spacing:1px; transition:background 0.15s; }
+  .suggestion-item span { color:var(--accent); }
+  .suggestion-item:hover { background:rgba(200,245,96,0.07); color:var(--text); }
 
   /* Leaderboard */
   .lb-item { background:var(--surface); border:1px solid var(--border); border-radius:2px; padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:12px; }
@@ -194,7 +199,10 @@
     <div class="subsection">
       <div class="subsection-title">Add Friend</div>
       <div class="add-row">
-        <input type="text" id="friendInput" placeholder="Enter username..." onkeydown="if(event.key==='Enter')sendFriendRequest()" />
+        <div class="suggestions-wrap">
+          <input type="text" id="friendInput" placeholder="Enter username..." maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter'){hideSuggestions();sendFriendRequest()}else if(event.key==='Escape')hideSuggestions()" />
+          <div class="suggestions" id="friendSuggestions" style="display:none"></div>
+        </div>
         <button class="btn-sm" onclick="sendFriendRequest()">Send</button>
       </div>
       <div class="inline-msg" id="friendMsg"></div>
@@ -246,6 +254,7 @@ let _openSession = null;  // the current open DB session row
 let _tickInterval  = null;
 let _friendTimers  = {};
 let _lbTimers      = {};
+let _suggestTimer  = null;
 
 // ── Helpers ──
 const fmtDuration = ms => {
@@ -509,6 +518,45 @@ async function clearLog() {
   await loadLog();
 }
 
+// ── FRIEND AUTOCOMPLETE ──
+function hideSuggestions() {
+  const el = document.getElementById('friendSuggestions');
+  if (el) { el.style.display='none'; el.innerHTML=''; }
+}
+
+function selectSuggestion(username) {
+  document.getElementById('friendInput').value = username;
+  hideSuggestions();
+}
+
+async function fetchSuggestions(val) {
+  if (!_profile) return;
+  const { data } = await sb.from('profiles')
+    .select('username')
+    .ilike('username', `${val}%`)
+    .neq('username', _profile.username)
+    .limit(6);
+  const el = document.getElementById('friendSuggestions');
+  if (!data || !data.length) { hideSuggestions(); return; }
+  el.innerHTML = data.map(u => {
+    const match = u.username.slice(0, val.length);
+    const rest  = u.username.slice(val.length);
+    return `<div class="suggestion-item" onmousedown="selectSuggestion('${u.username}')">@<span>${match}</span>${rest}</div>`;
+  }).join('');
+  el.style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('friendInput');
+  inp.addEventListener('input', function() {
+    clearTimeout(_suggestTimer);
+    const val = this.value.trim().toLowerCase();
+    if (val.length < 2) { hideSuggestions(); return; }
+    _suggestTimer = setTimeout(() => fetchSuggestions(val), 280);
+  });
+  inp.addEventListener('blur', () => setTimeout(hideSuggestions, 150));
+});
+
 // ── FRIENDS ──
 async function sendFriendRequest() {
   const input  = document.getElementById('friendInput');
@@ -617,7 +665,7 @@ async function loadFriends() {
         <div class="friend-timer" id="ft-${fid}">${sinceTs ? fmtDuration(Date.now()-sinceTs) : '—'}</div>
         <div class="friend-meta">${sinceTs ? 'Since '+fmtDate(sinceTs) : 'No active session'}</div>
       </div>
-      <button class="btn-remove" onclick="removeFriend('${fid}','${p.username}')" title="Remove">✕</button>`;
+      <button class="btn-unfriend" onclick="removeFriend('${fid}','${p.username}')">Unfriend</button>`;
     list.appendChild(card);
 
     if (sinceTs) {

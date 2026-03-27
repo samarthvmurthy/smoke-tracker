@@ -92,7 +92,11 @@
   .inline-msg.error { color:var(--danger); } .inline-msg.success { color:var(--success); }
   .subsection { margin-bottom:28px; }
   .subsection-title { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted2); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
-  .friend-card { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; position:relative; overflow:hidden; }
+  .friend-card { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; position:relative; overflow:hidden; }
+  .mini-avatar { width:38px; height:38px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:18px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; position:relative; }
+  .mini-avatar img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .lb-avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; position:relative; }
+  .lb-avatar img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
   .friend-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:var(--accent-dim); }
   .friend-name { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:var(--accent); }
   .friend-timer { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--text); }
@@ -114,7 +118,7 @@
   .suggestion-item:hover { background:rgba(200,245,96,0.07); color:var(--text); }
 
   /* Leaderboard */
-  .lb-item { background:var(--surface); border:1px solid var(--border); border-radius:2px; padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:12px; }
+  .lb-item { background:var(--surface); border:1px solid var(--border); border-radius:2px; padding:16px 20px; margin-bottom:8px; display:grid; grid-template-columns:44px 34px 1fr auto; align-items:center; gap:12px; }
   .lb-item.is-me { border-color:var(--accent-dim); background:rgba(200,245,96,0.02); }
   .lb-rank { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:2px; text-align:center; }
   .rank-1{color:var(--gold)} .rank-2{color:var(--silver)} .rank-3{color:var(--bronze)} .rank-n{color:var(--muted2)}
@@ -142,6 +146,69 @@
   .btn-cancel:hover { border-color:var(--muted2); color:var(--text); }
   .loading { text-align:center; padding:32px; font-size:11px; letter-spacing:3px; color:var(--muted2); text-transform:uppercase; }
 
+  /* Avatar & Dropdown */
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:opacity 0.2s; flex-shrink:0; overflow:hidden; position:relative; }
+  .avatar:hover { opacity:0.82; }
+  .nav-dropdown-wrap { position:relative; }
+  .nav-dropdown { position:absolute; top:calc(100% + 12px); right:0; width:250px; background:var(--surface); border:1px solid var(--border); border-radius:4px; box-shadow:0 12px 40px rgba(0,0,0,0.6); z-index:300; opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity 0.15s, transform 0.15s; }
+  .nav-dropdown.open { opacity:1; pointer-events:all; transform:translateY(0); }
+  .nav-dropdown::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); border-radius:4px 4px 0 0; }
+  .dd-profile { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+  .dd-avatar-lg { width:44px; height:44px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; position:relative; }
+  .dd-info { overflow:hidden; }
+  .dd-username { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dd-email { font-size:10px; color:var(--muted2); letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px; }
+  .dd-menu { padding:8px 0; }
+  .dd-item { display:flex; align-items:center; gap:12px; padding:11px 20px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted2); cursor:pointer; transition:all 0.15s; border:none; background:none; width:100%; text-align:left; font-family:'DM Mono',monospace; }
+  .dd-item:hover { color:var(--text); background:rgba(255,255,255,0.03); }
+  .dd-item.danger:hover { color:var(--danger); background:rgba(255,68,85,0.04); }
+  .dd-item i { width:16px; text-align:center; font-size:12px; }
+  .dd-divider { border:none; border-top:1px solid var(--border); margin:6px 0; }
+
+  /* Settings Modal */
+  .settings-overlay { position:fixed; top:0; right:0; bottom:0; left:0; background:rgba(0,0,0,0.92); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); z-index:400; opacity:0; pointer-events:none; transition:opacity 0.2s; display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:40px 16px; }
+  .settings-overlay.active { opacity:1; pointer-events:all; }
+  .settings-modal { background:var(--surface); border:1px solid var(--border); border-radius:4px; width:100%; max-width:480px; position:relative; margin:auto; }
+  .settings-modal::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); border-radius:4px 4px 0 0; }
+  .settings-header { padding:22px 28px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .settings-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:4px; color:var(--accent); }
+  .settings-close { background:none; border:none; color:var(--muted2); cursor:pointer; font-size:18px; padding:4px 6px; transition:color 0.2s; line-height:1; }
+  .settings-close:hover { color:var(--text); }
+  .settings-body { padding:28px; }
+  .settings-section { margin-bottom:32px; }
+  .settings-section:last-child { margin-bottom:0; }
+  .settings-section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .settings-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted2); }
+  .settings-edit-btn { background:none; border:1px solid var(--border2); color:var(--muted2); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .settings-edit-btn:hover { border-color:var(--accent-dim); color:var(--accent); }
+  .settings-field { margin-bottom:14px; }
+  .settings-field label { display:block; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted2); margin-bottom:6px; }
+  .settings-field input { width:100%; background:#0a0a0a; border:1px solid var(--border2); border-radius:2px; padding:11px 14px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; outline:none; transition:border-color 0.2s, background 0.2s, border 0.2s; -webkit-appearance:none; appearance:none; }
+  .settings-field input:focus { border-color:var(--accent-dim); }
+  .settings-field input:disabled { background:transparent; border-color:transparent; opacity:1; color:var(--text); cursor:default; padding-left:0; }
+  .settings-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .settings-btn { padding:11px 22px; background:var(--accent); color:#080808; border:none; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; cursor:pointer; border-radius:2px; transition:opacity 0.2s; white-space:nowrap; }
+  .settings-btn:hover:not(:disabled) { opacity:0.88; }
+  .settings-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .settings-btn.ghost { background:transparent; color:var(--muted2); border:1px solid var(--border2); }
+  .settings-btn.ghost:hover:not(:disabled) { border-color:var(--muted2); color:var(--text); opacity:1; }
+  .settings-btn.danger-btn { background:transparent; color:var(--danger); border:1px solid rgba(255,68,85,0.4); }
+  .settings-btn.danger-btn:hover { background:var(--danger); color:#080808; opacity:1; }
+  .settings-msg { font-size:11px; margin-top:10px; min-height:16px; letter-spacing:0.5px; line-height:1.6; }
+  .settings-msg.error { color:var(--danger); }
+  .settings-msg.success { color:var(--success); }
+  .danger-zone-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--danger); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid rgba(255,68,85,0.25); }
+  /* Avatar in settings */
+  .settings-avatar-wrap { display:flex; justify-content:center; margin-bottom:28px; }
+  .settings-avatar-circle { width:88px; height:88px; border-radius:50%; background:var(--accent); color:#080808; font-family:'Bebas Neue',sans-serif; font-size:40px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; cursor:default; transition:opacity 0.2s; }
+  .settings-avatar-circle.editable { cursor:pointer; }
+  .settings-avatar-circle.editable:hover { opacity:0.88; }
+  .settings-avatar-circle.editable:hover .settings-avatar-overlay { opacity:1; }
+  .settings-avatar-circle img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .settings-avatar-initial { position:relative; z-index:1; }
+  .settings-avatar-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.55); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; opacity:0; transition:opacity 0.2s; color:#fff; font-size:18px; pointer-events:none; z-index:2; }
+  .settings-avatar-overlay span { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; }
+
   @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
   @keyframes pulse {
     0%,100%{text-shadow:0 0 60px rgba(200,245,96,0.12)}
@@ -157,8 +224,29 @@
 <nav class="nav">
   <div class="nav-logo"><i class="fa-solid fa-ban-smoking"></i> SMOKE FREE</div>
   <div class="nav-right">
-    <span>@<span id="navUser" class="nav-user">—</span></span>
-    <button class="btn-ghost" onclick="doLogout()">Sign out</button>
+    <div class="nav-dropdown-wrap" id="avatarWrap">
+      <div class="avatar" id="navAvatar" onclick="toggleDropdown()">
+        <img id="navAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        <span id="navAvatarInitial">?</span>
+      </div>
+      <div class="nav-dropdown" id="navDropdown">
+        <div class="dd-profile">
+          <div class="dd-avatar-lg" id="ddAvatarLg">
+            <img id="ddAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+            <span id="ddAvatarInitial">?</span>
+          </div>
+          <div class="dd-info">
+            <div class="dd-username" id="ddUsername">—</div>
+            <div class="dd-email" id="ddEmail">—</div>
+          </div>
+        </div>
+        <div class="dd-menu">
+          <button class="dd-item" onclick="openSettings()"><i class="fa-solid fa-gear"></i>Settings</button>
+          <hr class="dd-divider">
+          <button class="dd-item danger" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sign Out</button>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -238,9 +326,88 @@
   </div>
 </div>
 
+<!-- Settings modal -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-modal">
+    <div class="settings-header">
+      <div class="settings-title">Settings</div>
+      <button class="settings-close" onclick="closeSettings()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="settings-body">
+
+      <!-- Profile -->
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <div class="settings-section-title">Profile</div>
+          <button class="settings-edit-btn" id="profileEditBtn" onclick="enableEditMode()">Edit</button>
+        </div>
+
+        <!-- Avatar -->
+        <div class="settings-avatar-wrap">
+          <div class="settings-avatar-circle" id="settingsAvatarCircle" onclick="triggerAvatarUpload()">
+            <img id="settingsAvatarImg" style="display:none">
+            <span class="settings-avatar-initial" id="settingsAvatarInitial">?</span>
+            <div class="settings-avatar-overlay" id="settingsAvatarOverlay">
+              <i class="fa-solid fa-camera"></i>
+              <span>Change</span>
+            </div>
+          </div>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+        </div>
+
+        <div class="settings-field">
+          <label>Username</label>
+          <input type="text" id="setUsername" maxlength="30" autocomplete="off" disabled />
+        </div>
+        <div class="settings-field">
+          <label>Email Address</label>
+          <input type="email" id="setEmail" maxlength="254" disabled />
+        </div>
+        <div class="settings-msg" id="setProfileMsg"></div>
+        <div class="settings-actions" id="profileActions" style="display:none">
+          <button class="settings-btn ghost" onclick="cancelEditMode()">Cancel</button>
+          <button class="settings-btn" id="saveProfileBtn" onclick="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <div class="settings-section-title">Change Password</div>
+        </div>
+        <div class="settings-field">
+          <label>Current Password</label>
+          <input type="password" id="setCurPw" placeholder="••••••••" maxlength="128" />
+        </div>
+        <div class="settings-field">
+          <label>New Password</label>
+          <input type="password" id="setNewPw" placeholder="min 6 characters" maxlength="128" />
+        </div>
+        <div class="settings-field">
+          <label>Confirm New Password</label>
+          <input type="password" id="setConfirmPw" placeholder="repeat new password" maxlength="128" />
+        </div>
+        <button class="settings-btn" id="setPasswordBtn" onclick="savePassword()">Update Password</button>
+        <div class="settings-msg" id="setPasswordMsg"></div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-section">
+        <div class="danger-zone-title">Danger Zone</div>
+        <p style="font-size:11px;color:var(--muted2);line-height:1.9;margin-bottom:16px">
+          Permanently deletes your profile, all sessions, and friend connections. This cannot be undone.
+        </p>
+        <button class="settings-btn danger-btn" onclick="deleteAccount()">Delete Account</button>
+        <div class="settings-msg" id="setDeleteMsg"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
-const SB_URL = 'https://vtlivesjwzinffceeriv.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA';
+const SB_URL = 'https://wyoumolijxkrteklvjel.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5b3Vtb2xpanhrcnRla2x2amVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NDM5NzYsImV4cCI6MjA4OTExOTk3Nn0.nJEkiOeQ1FQNgywgsWmYc98MsgNWqYED0J7pEwarSiI';
 
 const { createClient } = supabase;
 const sb = createClient(SB_URL, SB_KEY, {
@@ -254,7 +421,11 @@ let _openSession = null;  // the current open DB session row
 let _tickInterval  = null;
 let _friendTimers  = {};
 let _lbTimers      = {};
-let _suggestTimer  = null;
+let _suggestTimer      = null;
+let _editMode          = false;
+let _pendingAvatarFile = null;
+let _origUsername      = '';
+let _origEmail         = '';
 
 // ── Helpers ──
 const fmtDuration = ms => {
@@ -293,7 +464,7 @@ async function bootstrap(user) {
   try {
     const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
     _profile = profile;
-    document.getElementById('navUser').textContent = profile?.username || user.email;
+    updateAvatar();
 
     await syncTimerFromDB();
     await loadLog();
@@ -616,8 +787,8 @@ async function loadFriends() {
   const { data:incoming } = await sb.from('friendships').select('id,user_id,created_at').eq('friend_id',_user.id).eq('status','pending');
   const enriched=[];
   for (const r of (incoming||[])) {
-    const { data:p } = await sb.from('profiles').select('username').eq('id',r.user_id).maybeSingle();
-    if (p) enriched.push({...r, username:p.username});
+    const { data:p } = await sb.from('profiles').select('username,avatar_url').eq('id',r.user_id).maybeSingle();
+    if (p) enriched.push({...r, username:p.username, avatar_url:p.avatar_url});
   }
 
   const incomingSec = document.getElementById('incomingSection');
@@ -626,6 +797,7 @@ async function loadFriends() {
     incomingSec.style.display='block'; badge.style.display='inline';
     document.getElementById('incomingList').innerHTML = enriched.map(r=>`
       <div class="request-card">
+        <div class="mini-avatar">${r.avatar_url ? `<img src="${r.avatar_url}" alt="">` : r.username[0].toUpperCase()}</div>
         <div><div class="request-name">@${r.username}</div><div class="request-meta">Sent ${fmtDate(new Date(r.created_at).getTime())}</div></div>
         <div class="request-actions">
           <button class="btn-accept"  onclick="acceptRequest('${r.id}')">Accept</button>
@@ -644,7 +816,7 @@ async function loadFriends() {
   list.innerHTML='';
 
   for (const fid of fids) {
-    const { data:p } = await sb.from('profiles').select('username').eq('id',fid).maybeSingle();
+    const { data:p } = await sb.from('profiles').select('username,avatar_url').eq('id',fid).maybeSingle();
     if (!p) continue;
 
     // Pull their open session from DB
@@ -656,10 +828,12 @@ async function loadFriends() {
       .limit(1);
 
     const sinceTs = openSess&&openSess.length>0 ? openSess[0].start_time : null;
+    const avatarHtml = p.avatar_url ? `<img src="${p.avatar_url}" alt="">` : p.username[0].toUpperCase();
 
     const card = document.createElement('div');
     card.className='friend-card';
     card.innerHTML=`
+      <div class="mini-avatar">${avatarHtml}</div>
       <div>
         <div class="friend-name">@${p.username}</div>
         <div class="friend-timer" id="ft-${fid}">${sinceTs ? fmtDuration(Date.now()-sinceTs) : '—'}</div>
@@ -690,7 +864,7 @@ async function loadLeaderboard() {
   const ids = new Set([_user.id]);
   (fs||[]).forEach(f => { ids.add(f.user_id); ids.add(f.friend_id); });
 
-  const { data:profiles } = await sb.from('profiles').select('id,username').in('id',[...ids]);
+  const { data:profiles } = await sb.from('profiles').select('id,username,avatar_url').in('id',[...ids]);
 
   const entries=[];
   for (const p of (profiles||[])) {
@@ -698,7 +872,7 @@ async function loadLeaderboard() {
     const { data:last } = await sb.from('sessions').select('end_time').eq('user_id',p.id).not('end_time','is',null).order('end_time',{ascending:false}).limit(1);
     const isActive = open&&open.length>0;
     const sinceTs  = isActive ? open[0].start_time : last&&last.length>0 ? last[0].end_time : null;
-    entries.push({ id:p.id, username:p.username, elapsed:sinceTs?Date.now()-sinceTs:0, sinceTs, isActive });
+    entries.push({ id:p.id, username:p.username, avatar_url:p.avatar_url, elapsed:sinceTs?Date.now()-sinceTs:0, sinceTs, isActive });
   }
 
   entries.sort((a,b) => b.elapsed - a.elapsed);
@@ -706,6 +880,7 @@ async function loadLeaderboard() {
   c.innerHTML = entries.map((e,i) => `
     <div class="lb-item ${e.id===_user.id?'is-me':''}">
       <div class="lb-rank ${['rank-1','rank-2','rank-3'][i]||'rank-n'}">${i<3?medals[i]:'#'+(i+1)}</div>
+      <div class="lb-avatar">${e.avatar_url ? `<img src="${e.avatar_url}" alt="">` : e.username[0].toUpperCase()}</div>
       <div>
         <div class="lb-name ${e.id===_user.id?'is-me':''}">@${e.username}</div>
         <div class="lb-sub">${e.id===_user.id?'you':'friend'}</div>
@@ -736,6 +911,217 @@ function switchTab(name) {
   if (name!=='leaderboard') { Object.values(_lbTimers).forEach(clearInterval); _lbTimers={}; }
   if (name==='friends')     loadFriends();
   if (name==='leaderboard') loadLeaderboard();
+}
+
+// ── AVATAR & DROPDOWN ──
+function updateAvatar() {
+  const initial    = (_profile?.username || _user?.email || '?')[0].toUpperCase();
+  const avatarUrl  = _profile?.avatar_url || null;
+
+  // Nav avatar
+  const navImg  = document.getElementById('navAvatarImg');
+  const navInit = document.getElementById('navAvatarInitial');
+  if (avatarUrl) { navImg.src=avatarUrl; navImg.style.display='block'; navInit.style.display='none'; }
+  else           { navImg.style.display='none'; navInit.style.display='block'; navInit.textContent=initial; }
+
+  // Dropdown avatar
+  const ddImg  = document.getElementById('ddAvatarImg');
+  const ddInit = document.getElementById('ddAvatarInitial');
+  if (avatarUrl) { ddImg.src=avatarUrl; ddImg.style.display='block'; ddInit.style.display='none'; }
+  else           { ddImg.style.display='none'; ddInit.style.display='block'; ddInit.textContent=initial; }
+
+  document.getElementById('ddUsername').textContent = '@' + (_profile?.username || '—');
+  document.getElementById('ddEmail').textContent    = _user?.email || '—';
+}
+
+function toggleDropdown() {
+  document.getElementById('navDropdown').classList.toggle('open');
+}
+
+function closeDropdown() {
+  document.getElementById('navDropdown').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('avatarWrap').contains(e.target)) closeDropdown();
+});
+
+// ── SETTINGS ──
+function openSettings() {
+  closeDropdown();
+  _editMode = false;
+  _pendingAvatarFile = null;
+  _origUsername = _profile?.username || '';
+  _origEmail    = _user?.email || '';
+
+  // Populate fields
+  document.getElementById('setUsername').value  = _origUsername;
+  document.getElementById('setEmail').value     = _origEmail;
+  document.getElementById('setCurPw').value     = '';
+  document.getElementById('setNewPw').value     = '';
+  document.getElementById('setConfirmPw').value = '';
+
+  // Read-only state
+  document.getElementById('setUsername').disabled = true;
+  document.getElementById('setEmail').disabled    = true;
+  document.getElementById('profileEditBtn').style.display  = 'inline-block';
+  document.getElementById('profileActions').style.display  = 'none';
+  document.getElementById('settingsAvatarCircle').classList.remove('editable');
+
+  // Avatar
+  const avatarUrl = _profile?.avatar_url || null;
+  const img  = document.getElementById('settingsAvatarImg');
+  const init = document.getElementById('settingsAvatarInitial');
+  if (avatarUrl) { img.src=avatarUrl; img.style.display='block'; init.style.display='none'; }
+  else           { img.style.display='none'; init.style.display='block'; init.textContent=(_origUsername||'?')[0].toUpperCase(); }
+
+  ['setProfileMsg','setPasswordMsg','setDeleteMsg'].forEach(id => {
+    const el=document.getElementById(id); el.textContent=''; el.className='settings-msg';
+  });
+  document.getElementById('settingsOverlay').classList.add('active');
+}
+
+function enableEditMode() {
+  _editMode = true;
+  document.getElementById('setUsername').disabled = false;
+  document.getElementById('setEmail').disabled    = false;
+  document.getElementById('profileEditBtn').style.display = 'none';
+  document.getElementById('profileActions').style.display = 'flex';
+  document.getElementById('settingsAvatarCircle').classList.add('editable');
+  document.getElementById('setUsername').focus();
+}
+
+function cancelEditMode() {
+  _editMode = false;
+  _pendingAvatarFile = null;
+  document.getElementById('setUsername').value    = _origUsername;
+  document.getElementById('setEmail').value       = _origEmail;
+  document.getElementById('setUsername').disabled = true;
+  document.getElementById('setEmail').disabled    = true;
+  document.getElementById('profileEditBtn').style.display = 'inline-block';
+  document.getElementById('profileActions').style.display = 'none';
+  document.getElementById('settingsAvatarCircle').classList.remove('editable');
+  // Restore avatar preview
+  const avatarUrl = _profile?.avatar_url || null;
+  const img  = document.getElementById('settingsAvatarImg');
+  const init = document.getElementById('settingsAvatarInitial');
+  if (avatarUrl) { img.src=avatarUrl; img.style.display='block'; init.style.display='none'; }
+  else           { img.style.display='none'; init.style.display='block'; }
+  setSettingsMsg('setProfileMsg','','');
+}
+
+function triggerAvatarUpload() {
+  if (!_editMode) return;
+  document.getElementById('avatarFileInput').click();
+}
+
+function handleAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _pendingAvatarFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img  = document.getElementById('settingsAvatarImg');
+    const init = document.getElementById('settingsAvatarInitial');
+    img.src = e.target.result; img.style.display='block'; init.style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfile() {
+  const btn      = document.getElementById('saveProfileBtn');
+  const newUser  = document.getElementById('setUsername').value.trim().toLowerCase();
+  const newEmail = document.getElementById('setEmail').value.trim();
+  btn.disabled=true; btn.textContent='Saving...';
+
+  // Upload avatar if pending
+  if (_pendingAvatarFile) {
+    const { error:upErr } = await sb.storage.from('avatars').upload(_user.id, _pendingAvatarFile, { upsert:true, contentType:_pendingAvatarFile.type });
+    if (upErr) { setSettingsMsg('setProfileMsg','Failed to upload photo. Try again.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    const { data:urlData } = sb.storage.from('avatars').getPublicUrl(_user.id);
+    _profile.avatar_url = urlData.publicUrl + '?t=' + Date.now();
+    await sb.from('profiles').update({ avatar_url: _profile.avatar_url }).eq('id', _user.id);
+    _pendingAvatarFile = null;
+    updateAvatar();
+  }
+
+  // Update username
+  if (newUser !== _origUsername) {
+    if (!newUser) { setSettingsMsg('setProfileMsg','Username cannot be empty.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    if (!/^[a-z0-9_]+$/.test(newUser)) { setSettingsMsg('setProfileMsg','Username: letters, numbers, underscores only.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    const { data:existing } = await sb.from('profiles').select('id').eq('username', newUser).maybeSingle();
+    if (existing) { setSettingsMsg('setProfileMsg','Username already taken.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    const { error } = await sb.from('profiles').update({ username: newUser }).eq('id', _user.id);
+    if (error) { setSettingsMsg('setProfileMsg','Failed to update username.','error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    _profile.username = newUser;
+    _origUsername = newUser;
+    updateAvatar();
+  }
+
+  // Update email
+  if (newEmail !== _origEmail) {
+    const { error } = await sb.auth.updateUser({ email: newEmail });
+    if (error) { setSettingsMsg('setProfileMsg', error.message,'error'); btn.disabled=false; btn.textContent='Save Changes'; return; }
+    setSettingsMsg('setProfileMsg','✓ Changes saved. Confirm new email in your inbox.','success');
+  } else {
+    setSettingsMsg('setProfileMsg','✓ Changes saved.','success');
+  }
+
+  btn.disabled=false; btn.textContent='Save Changes';
+  // Exit edit mode
+  document.getElementById('setUsername').disabled = true;
+  document.getElementById('setEmail').disabled    = true;
+  document.getElementById('profileEditBtn').style.display = 'inline-block';
+  document.getElementById('profileActions').style.display = 'none';
+  document.getElementById('settingsAvatarCircle').classList.remove('editable');
+  _editMode = false;
+}
+
+function closeSettings() {
+  if (_editMode) cancelEditMode();
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+document.getElementById('settingsOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+});
+
+function setSettingsMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = `settings-msg ${type||''}`;
+}
+
+async function savePassword() {
+  const curPw  = document.getElementById('setCurPw').value;
+  const newPw  = document.getElementById('setNewPw').value;
+  const confPw = document.getElementById('setConfirmPw').value;
+  const btn    = document.getElementById('setPasswordBtn');
+  if (!curPw||!newPw||!confPw) { setSettingsMsg('setPasswordMsg','Fill in all password fields.','error'); return; }
+  if (newPw.length < 6)        { setSettingsMsg('setPasswordMsg','New password must be at least 6 characters.','error'); return; }
+  if (newPw !== confPw)        { setSettingsMsg('setPasswordMsg','New passwords do not match.','error'); return; }
+  btn.disabled=true; btn.textContent='Updating...';
+  const { error:authErr } = await sb.auth.signInWithPassword({ email:_user.email, password:curPw });
+  if (authErr) { setSettingsMsg('setPasswordMsg','Current password is incorrect.','error'); btn.disabled=false; btn.textContent='Update Password'; return; }
+  const { error } = await sb.auth.updateUser({ password: newPw });
+  btn.disabled=false; btn.textContent='Update Password';
+  if (error) { setSettingsMsg('setPasswordMsg', error.message,'error'); return; }
+  document.getElementById('setCurPw').value='';
+  document.getElementById('setNewPw').value='';
+  document.getElementById('setConfirmPw').value='';
+  setSettingsMsg('setPasswordMsg','✓ Password updated successfully!','success');
+}
+
+async function deleteAccount() {
+  const confirmed = prompt('This will permanently delete your account and all data.\n\nType your username to confirm:');
+  if (confirmed === null) return;
+  if (confirmed !== _profile?.username) { setSettingsMsg('setDeleteMsg','Username did not match.','error'); return; }
+  setSettingsMsg('setDeleteMsg','Deleting account...','');
+  await sb.from('friendships').delete().or(`user_id.eq.${_user.id},friend_id.eq.${_user.id}`);
+  await sb.from('sessions').delete().eq('user_id', _user.id);
+  await sb.from('profiles').delete().eq('id', _user.id);
+  try { await sb.auth.signOut(); } catch {}
+  Object.keys(localStorage).filter(k=>k.startsWith('sb-')).forEach(k=>localStorage.removeItem(k));
+  window.location.href = 'index.html';
 }
 
 // ── LOGOUT ──

@@ -120,8 +120,8 @@
 </div>
 
 <script>
-const SB_URL  = 'https://vtlivesjwzinffceeriv.supabase.co';
-const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bGl2ZXNqd3ppbmZmY2Vlcml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDE3NTYsImV4cCI6MjA4ODQxNzc1Nn0.5tYWbarj_zeS2TCTbxFinBhDCHHq3hcUfM1azKOGdpA';
+const SB_URL  = 'https://wyoumolijxkrteklvjel.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5b3Vtb2xpanhrcnRla2x2amVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NDM5NzYsImV4cCI6MjA4OTExOTk3Nn0.nJEkiOeQ1FQNgywgsWmYc98MsgNWqYED0J7pEwarSiI';
 
 const { createClient } = supabase;
 const sb = createClient(SB_URL, SB_KEY, {
@@ -190,7 +190,7 @@ async function doSignup() {
 
   // Block the auth listener from redirecting until the profile row is inserted.
   _creatingProfile = true;
-  const {data,error}=await sb.auth.signUp({email,password:pass});
+  const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:'https://samarthvmurthy.github.io/smoke-tracker/'}});
   if(error){
     _creatingProfile = false;
     setMsg('signupMsg',error.message.toLowerCase().includes('already')?'An account with this email already exists. Please sign in.':error.message,'error');
@@ -221,7 +221,7 @@ async function doForgot() {
   if(!email){setMsg('forgotMsg','Please enter your email.','error');return;}
   btn.disabled=true; btn.textContent='Sending...';
   const {error}=await sb.auth.resetPasswordForEmail(email,{
-    redirectTo:'https://www.smokefreetimer.com/'
+    redirectTo:'https://samarthvmurthy.github.io/smoke-tracker/'
   });
   if(error) setMsg('forgotMsg',error.message,'error');
   else{setMsg('forgotMsg','✓ Reset link sent! Check your email.','success');setTimeout(()=>show('cardLogin'),4000);}

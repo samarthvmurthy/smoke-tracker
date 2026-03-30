@@ -428,6 +428,9 @@ let _openSession = null;  // the current open DB session row
 let _tickInterval  = null;
 let _friendTimers  = {};
 let _lbTimers      = {};
+const CACHE_TTL    = 60_000; // ms — reuse data if tab revisited within 60 s
+let _friendsCache  = { ts: 0, data: null };
+let _lbCache       = { ts: 0, data: null };
 let _suggestTimer      = null;
 let _editMode          = false;
 let _pendingAvatarFile = null;
@@ -480,6 +483,8 @@ async function bootstrap(user) {
     console.error('Bootstrap error:', e);
   } finally {
     document.getElementById('loadingScreen').style.display = 'none';
+    const hash = window.location.hash.slice(1);
+    if (hash === 'friends' || hash === 'leaderboard') switchTab(hash);
   }
 }
 
@@ -766,12 +771,14 @@ async function sendFriendRequest() {
 
 async function acceptRequest(id) {
   await sb.from('friendships').update({ status:'accepted' }).eq('id', id);
-  await loadFriends();
+  _friendsCache.ts = 0; _lbCache.ts = 0;
+  await loadFriends(true);
 }
 
 async function declineRequest(id) {
   await sb.from('friendships').delete().eq('id', id);
-  await loadFriends();
+  _friendsCache.ts = 0; _lbCache.ts = 0;
+  await loadFriends(true);
 }
 
 async function removeFriend(fid, uname) {
@@ -779,7 +786,8 @@ async function removeFriend(fid, uname) {
   await sb.from('friendships').delete().eq('user_id',_user.id).eq('friend_id',fid);
   await sb.from('friendships').delete().eq('user_id',fid).eq('friend_id',_user.id);
   clearInterval(_friendTimers[fid]); delete _friendTimers[fid];
-  await loadFriends();
+  _friendsCache.ts = 0; _lbCache.ts = 0;
+  await loadFriends(true);
 }
 
 async function checkIncomingRequests() {
@@ -787,19 +795,50 @@ async function checkIncomingRequests() {
   document.getElementById('reqBadge').style.display = data&&data.length>0 ? 'inline' : 'none';
 }
 
-async function loadFriends() {
-  Object.values(_friendTimers).forEach(clearInterval); _friendTimers={};
-
-  // Incoming pending requests
-  const { data:incoming } = await sb.from('friendships').select('id,user_id,created_at').eq('friend_id',_user.id).eq('status','pending');
-  const enriched=[];
-  for (const r of (incoming||[])) {
-    const { data:p } = await sb.from('profiles').select('username,avatar_url').eq('id',r.user_id).maybeSingle();
-    if (p) enriched.push({...r, username:p.username, avatar_url:p.avatar_url});
+async function loadFriends(force = false) {
+  const now = Date.now();
+  if (!force && _friendsCache.data && (now - _friendsCache.ts) < CACHE_TTL) {
+    _renderFriends(_friendsCache.data); return;
   }
+
+  // 3 parallel queries instead of sequential per-user fetches
+  const [{ data:incoming }, { data:sent }, { data:received }] = await Promise.all([
+    sb.from('friendships').select('id,user_id,created_at').eq('friend_id',_user.id).eq('status','pending'),
+    sb.from('friendships').select('friend_id').eq('user_id',_user.id).eq('status','accepted'),
+    sb.from('friendships').select('user_id').eq('friend_id',_user.id).eq('status','accepted')
+  ]);
+
+  const fids        = [...(sent||[]).map(f=>f.friend_id), ...(received||[]).map(f=>f.user_id)];
+  const pendingUids = (incoming||[]).map(r => r.user_id);
+  const allIds      = [...new Set([...pendingUids, ...fids])];
+
+  // 1 batch profile query instead of N individual ones
+  const { data:profileRows } = allIds.length
+    ? await sb.from('profiles').select('id,username,avatar_url').in('id', allIds)
+    : { data: [] };
+  const profileMap = Object.fromEntries((profileRows||[]).map(p => [p.id, p]));
+
+  // 1 batch session query instead of N individual ones
+  const sessionMap = {};
+  if (fids.length) {
+    const { data:openSess } = await sb.from('sessions')
+      .select('user_id,start_time').in('user_id', fids)
+      .is('end_time', null).order('start_time', { ascending:false });
+    (openSess||[]).forEach(s => { if (!sessionMap[s.user_id]) sessionMap[s.user_id] = s.start_time; });
+  }
+
+  const cacheData = { incoming: incoming||[], fids, profileMap, sessionMap };
+  _friendsCache = { ts: now, data: cacheData };
+  _renderFriends(cacheData);
+}
+
+function _renderFriends({ incoming, fids, profileMap, sessionMap }) {
+  Object.values(_friendTimers).forEach(clearInterval); _friendTimers={};
 
   const incomingSec = document.getElementById('incomingSection');
   const badge       = document.getElementById('reqBadge');
+  const enriched    = incoming.map(r => ({ ...r, ...profileMap[r.user_id] })).filter(r => r.username);
+
   if (enriched.length > 0) {
     incomingSec.style.display='block'; badge.style.display='inline';
     document.getElementById('incomingList').innerHTML = enriched.map(r=>`
@@ -813,30 +852,15 @@ async function loadFriends() {
       </div>`).join('');
   } else { incomingSec.style.display='none'; badge.style.display='none'; }
 
-  // Accepted friends both directions
-  const { data:sent }     = await sb.from('friendships').select('friend_id').eq('user_id',_user.id).eq('status','accepted');
-  const { data:received } = await sb.from('friendships').select('user_id').eq('friend_id',_user.id).eq('status','accepted');
-  const fids = [...(sent||[]).map(f=>f.friend_id), ...(received||[]).map(f=>f.user_id)];
-
   const list = document.getElementById('friendsList');
   if (fids.length === 0) { list.innerHTML='<div class="empty-state">No friends yet — send a request above</div>'; return; }
   list.innerHTML='';
 
   for (const fid of fids) {
-    const { data:p } = await sb.from('profiles').select('username,avatar_url').eq('id',fid).maybeSingle();
+    const p = profileMap[fid];
     if (!p) continue;
-
-    // Pull their open session from DB
-    const { data:openSess } = await sb.from('sessions')
-      .select('start_time')
-      .eq('user_id', fid)
-      .is('end_time', null)
-      .order('start_time', { ascending:false })
-      .limit(1);
-
-    const sinceTs = openSess&&openSess.length>0 ? openSess[0].start_time : null;
+    const sinceTs    = sessionMap[fid] || null;
     const avatarHtml = p.avatar_url ? `<img src="${p.avatar_url}" alt="">` : p.username[0].toUpperCase();
-
     const card = document.createElement('div');
     card.className='friend-card';
     card.innerHTML=`
@@ -848,7 +872,6 @@ async function loadFriends() {
       </div>
       <button class="btn-unfriend" onclick="removeFriend('${fid}','${p.username}')">Unfriend</button>`;
     list.appendChild(card);
-
     if (sinceTs) {
       _friendTimers[fid] = setInterval(() => {
         const el = document.getElementById(`ft-${fid}`);
@@ -859,9 +882,12 @@ async function loadFriends() {
 }
 
 // ── LEADERBOARD ──
-async function loadLeaderboard() {
-  const c = document.getElementById('lbContainer');
-  c.innerHTML='<div class="loading">Loading...</div>';
+async function loadLeaderboard(force = false) {
+  const now = Date.now();
+  if (!force && _lbCache.data && (now - _lbCache.ts) < CACHE_TTL) {
+    _renderLeaderboard(_lbCache.data); return;
+  }
+  document.getElementById('lbContainer').innerHTML='<div class="loading">Loading...</div>';
 
   const { data:fs } = await sb.from('friendships')
     .select('user_id,friend_id')
@@ -871,20 +897,36 @@ async function loadLeaderboard() {
   const ids = new Set([_user.id]);
   (fs||[]).forEach(f => { ids.add(f.user_id); ids.add(f.friend_id); });
 
-  const { data:profiles } = await sb.from('profiles').select('id,username,avatar_url').in('id',[...ids]);
+  // 3 parallel queries instead of 2 per-person sequential ones
+  const [{ data:profiles }, { data:openAll }, { data:closedAll }] = await Promise.all([
+    sb.from('profiles').select('id,username,avatar_url').in('id',[...ids]),
+    sb.from('sessions').select('user_id,start_time').in('user_id',[...ids]).is('end_time',null).order('start_time',{ascending:false}),
+    sb.from('sessions').select('user_id,end_time').in('user_id',[...ids]).not('end_time','is',null).order('end_time',{ascending:false})
+  ]);
 
-  const entries=[];
-  for (const p of (profiles||[])) {
-    const { data:open } = await sb.from('sessions').select('start_time').eq('user_id',p.id).is('end_time',null).order('start_time',{ascending:false}).limit(1);
-    const { data:last } = await sb.from('sessions').select('end_time').eq('user_id',p.id).not('end_time','is',null).order('end_time',{ascending:false}).limit(1);
-    const isActive = open&&open.length>0;
-    const sinceTs  = isActive ? open[0].start_time : last&&last.length>0 ? last[0].end_time : null;
-    entries.push({ id:p.id, username:p.username, avatar_url:p.avatar_url, elapsed:sinceTs?Date.now()-sinceTs:0, sinceTs, isActive });
-  }
+  const openMap   = {};
+  (openAll||[]).forEach(s => { if (!openMap[s.user_id])   openMap[s.user_id]   = s.start_time; });
+  const closedMap = {};
+  (closedAll||[]).forEach(s => { if (!closedMap[s.user_id]) closedMap[s.user_id] = s.end_time; });
 
-  entries.sort((a,b) => b.elapsed - a.elapsed);
+  const entries = (profiles||[]).map(p => {
+    const isActive = !!openMap[p.id];
+    const sinceTs  = isActive ? openMap[p.id] : (closedMap[p.id] || null);
+    return { id:p.id, username:p.username, avatar_url:p.avatar_url, sinceTs, isActive };
+  });
+
+  _lbCache = { ts: now, data: entries };
+  _renderLeaderboard(entries);
+}
+
+function _renderLeaderboard(entries) {
+  Object.values(_lbTimers).forEach(clearInterval); _lbTimers={};
+  const now    = Date.now();
+  const sorted = [...entries]
+    .map(e => ({ ...e, elapsed: e.sinceTs ? now - e.sinceTs : 0 }))
+    .sort((a,b) => b.elapsed - a.elapsed);
   const medals=['🥇','🥈','🥉'];
-  c.innerHTML = entries.map((e,i) => `
+  document.getElementById('lbContainer').innerHTML = sorted.map((e,i) => `
     <div class="lb-item ${e.id===_user.id?'is-me':''}">
       <div class="lb-rank ${['rank-1','rank-2','rank-3'][i]||'rank-n'}">${i<3?medals[i]:'#'+(i+1)}</div>
       <div class="lb-avatar">${e.avatar_url ? `<img src="${e.avatar_url}" alt="">` : e.username[0].toUpperCase()}</div>
@@ -897,10 +939,7 @@ async function loadLeaderboard() {
         <div class="lb-since">${e.sinceTs?'since '+fmtDate(e.sinceTs):'no data'}</div>
       </div>
     </div>`).join('');
-
-  // Tick only active sessions
-  Object.values(_lbTimers).forEach(clearInterval); _lbTimers={};
-  entries.forEach(e => {
+  sorted.forEach(e => {
     if (!e.isActive || !e.sinceTs) return;
     _lbTimers[e.id] = setInterval(() => {
       const el = document.getElementById(`lb-dur-${e.id}`);
@@ -915,6 +954,7 @@ function switchTab(name) {
     document.getElementById(`tab-${t}`).classList.toggle('active', t===name);
     document.getElementById(`panel-${t}`).classList.toggle('active', t===name);
   });
+  history.replaceState(null, '', '#' + name);
   if (name!=='leaderboard') { Object.values(_lbTimers).forEach(clearInterval); _lbTimers={}; }
   if (name==='friends')     loadFriends();
   if (name==='leaderboard') loadLeaderboard();

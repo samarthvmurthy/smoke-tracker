@@ -44,6 +44,13 @@
   .content { flex:1; padding:28px 24px 60px; padding-bottom:max(60px, calc(60px + env(safe-area-inset-bottom))); max-width:580px; width:100%; margin:0 auto; }
   .panel { display:none; }
   .panel.active { display:block; animation:fadeUp 0.3s ease both; }
+  .site-footer {
+    border-top:1px solid var(--border); padding:20px 24px;
+    text-align:center; font-size:10px; letter-spacing:2px; color:var(--muted2);
+    display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .site-footer a { color:var(--muted2); text-decoration:none; transition:color 0.2s; }
+  .site-footer a:hover { color:var(--accent); }
 
   /* Timer */
   .timer-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:36px 28px 28px; text-align:center; position:relative; margin-bottom:24px; }
@@ -1166,5 +1173,13 @@ document.fonts.ready.then(() => {
   if (link) link.href = c.toDataURL();
 });
 </script>
+
+<footer class="site-footer">
+  <span>© 2026 Smoke Free</span>
+  <span>·</span>
+  <a href="about.html">About</a>
+  <span>·</span>
+  <span>MIT License</span>
+</footer>
 </body>
 </html>

@@ -17,7 +17,7 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     background:var(--bg); color:var(--text); font-family:'DM Mono',monospace;
-    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;
   }
   body::after {
     content:''; position:fixed; top:0; right:0; bottom:0; left:0; pointer-events:none; z-index:9998;
@@ -66,6 +66,12 @@
   .hint { font-size:11px; color:var(--muted2); line-height:1.9; margin-bottom:20px; }
   @keyframes fadeUp   { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+  .site-footer {
+    margin-top:32px; width:100%; text-align:center; font-size:10px; letter-spacing:2px;
+    color:var(--muted2); display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .site-footer a { color:var(--muted2); text-decoration:none; transition:color 0.2s; }
+  .site-footer a:hover { color:var(--accent); }
 </style>
 </head>
 <body>
@@ -118,6 +124,14 @@
     <div class="msg" id="updatePwMsg"></div>
   </div>
 </div>
+
+<footer class="site-footer">
+  <span>© 2026 Smoke Free</span>
+  <span>·</span>
+  <a href="about.html">About</a>
+  <span>·</span>
+  <span>MIT License</span>
+</footer>
 
 <script>
 const SB_URL  = 'https://vtlivesjwzinffceeriv.supabase.co';

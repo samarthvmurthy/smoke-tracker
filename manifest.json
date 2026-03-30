@@ -1,13 +1,17 @@
 {
   "name": "Smoke Free",
   "short_name": "Smoke Free",
-  "description": "Track your resistance. Quit smoking with friends.",
+  "description": "Track your resistance. Quit smoking — log sessions, beat your personal best, and compete with friends on the leaderboard.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080808",
   "theme_color": "#080808",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["health", "fitness", "lifestyle", "social"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon-192.png",
@@ -20,6 +24,38 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-mobile.jpeg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Smoke Free — Tracker"
+    },
+    {
+      "src": "screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Smoke Free — Desktop"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Leaderboard",
+      "short_name": "Leaderboard",
+      "description": "See who is resisting the longest",
+      "url": "/app.html#leaderboard",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Friends",
+      "short_name": "Friends",
+      "description": "View your friends list",
+      "url": "/app.html#friends",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Privacy Policy — Smoke Free</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080808">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080808; --surface:#101010; --border:#1c1c1c; --border2:#282828;
+    --accent:#c8f560; --accent-dim:#7a9938; --text:#f0f0f0;
+    --muted2:#999; --danger:#ff4455; --success:#60f5a0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:var(--bg); color:var(--text); font-family:'DM Mono',monospace;
+    min-height:100vh; display:flex; flex-direction:column;
+  }
+  body::after {
+    content:''; position:fixed; top:0; right:0; bottom:0; left:0; pointer-events:none; z-index:9998;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+  .nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px; height:54px; border-bottom:1px solid var(--border);
+    background:var(--surface); position:sticky; top:0; z-index:100;
+  }
+  .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:5px; color:var(--accent); text-decoration:none; }
+  .nav-back { background:none; border:1px solid var(--border2); color:var(--muted2); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:6px 12px; border-radius:2px; cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-block; }
+  .nav-back:hover { border-color:var(--muted2); color:var(--text); }
+  .content { flex:1; padding:48px 24px 40px; max-width:640px; width:100%; margin:0 auto; }
+
+  .page-title {
+    font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:8px;
+    color:var(--accent); margin-bottom:8px; animation:fadeUp 0.4s ease both;
+  }
+  .page-subtitle {
+    font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--muted2); margin-bottom:48px; animation:fadeUp 0.4s ease 0.05s both;
+  }
+
+  .section { margin-bottom:40px; animation:fadeUp 0.4s ease 0.1s both; }
+  .section-title {
+    font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:4px;
+    color:var(--accent); margin-bottom:16px; padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .section p {
+    font-size:12px; line-height:2; color:var(--text); margin-bottom:12px;
+  }
+  .section p:last-child { margin-bottom:0; }
+
+  .card {
+    background:var(--surface); border:1px solid var(--border); border-radius:4px;
+    padding:28px; position:relative; margin-bottom:24px;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  }
+
+  .data-table { width:100%; border-collapse:collapse; font-size:11px; margin-top:8px; }
+  .data-table th {
+    text-align:left; color:var(--accent); font-size:10px; letter-spacing:2px;
+    text-transform:uppercase; padding:8px 12px; border-bottom:1px solid var(--border2);
+    font-weight:400;
+  }
+  .data-table td {
+    padding:10px 12px; border-bottom:1px solid var(--border); color:#ccc; vertical-align:top;
+    line-height:1.8;
+  }
+  .data-table tr:last-child td { border-bottom:none; }
+
+  .highlight-box {
+    background:#0d1a00; border:1px solid var(--accent-dim); border-radius:2px;
+    padding:16px 20px; font-size:11px; color:var(--accent); line-height:2; letter-spacing:1px;
+    margin-top:8px;
+  }
+
+  .contact-link { color:var(--accent); text-decoration:none; }
+  .contact-link:hover { text-decoration:underline; }
+
+  .site-footer {
+    border-top:1px solid var(--border); padding:20px 24px;
+    text-align:center; font-size:10px; letter-spacing:2px; color:var(--muted2);
+    display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .site-footer a { color:var(--muted2); text-decoration:none; transition:color 0.2s; }
+  .site-footer a:hover { color:var(--accent); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="index.html">SMOKE FREE</a>
+  <a class="nav-back" href="index.html">← Back</a>
+</nav>
+
+<div class="content">
+  <div class="page-title">Privacy Policy</div>
+  <div class="page-subtitle">Effective date: March 12, 2026</div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">The Short Version</div>
+      <div class="highlight-box">
+        We collect only what is needed to run your account and the social features.
+        We do not sell your data. We do not show ads. We do not share your information
+        with third parties except Supabase, which stores it on our behalf.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Who We Are</div>
+      <p>
+        Smoke Free ("we", "us", "our") is a web and Android app that helps you track
+        cigarette-resistance streaks and stay accountable with friends.
+        The app is operated by an individual developer and is available at
+        <strong>smokefreetimer.com</strong>.
+      </p>
+      <p>
+        For any privacy-related questions, contact us at
+        <a class="contact-link" href="mailto:support@smokefreetimer.com">support@smokefreetimer.com</a>.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Data We Collect</div>
+      <p>We collect only the data required to provide the service.</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Why</th>
+            <th>Required?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Email address</td>
+            <td>Account creation, sign-in, and password recovery</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Username</td>
+            <td>Displayed on your profile, leaderboard, and friends list</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Session data<br><span style="color:#666;font-size:10px">(start time, end time)</span></td>
+            <td>Powers your resistance timer, personal best, and history log</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Friend connections</td>
+            <td>Enables the friends list and leaderboard features</td>
+            <td>No — optional feature</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:16px;">
+        We do not collect your real name, phone number, location, device identifiers,
+        or any sensitive personal information.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">How We Store Your Data</div>
+      <p>
+        All data is stored in <strong>Supabase</strong> (supabase.com), a managed
+        cloud database and authentication platform. Supabase acts as a data processor
+        on our behalf and stores data in secure, hosted PostgreSQL databases.
+        Supabase's privacy policy is available at
+        <a class="contact-link" href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.
+      </p>
+      <p>
+        Data is transmitted over HTTPS at all times. We do not store passwords
+        in plain text — authentication is handled entirely by Supabase Auth.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">How We Use Your Data</div>
+      <p>Your data is used exclusively to operate the app:</p>
+      <p>
+        — Authenticate you when you sign in<br>
+        — Display your resistance timer and session history<br>
+        — Show your username and stats on the leaderboard<br>
+        — Match friend requests by username<br>
+        — Send a password-recovery email if requested
+      </p>
+      <p>
+        We do not use your data for advertising, profiling, machine learning,
+        or any purpose other than running the features described above.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Sharing &amp; Third Parties</div>
+      <p>
+        We do not sell, rent, or share your personal data with any third party
+        for their own purposes. The only external service that processes your
+        data is Supabase, which stores it on our behalf as described above.
+      </p>
+      <p>
+        The app loads fonts from <strong>Google Fonts</strong> and icons from
+        <strong>Font Awesome CDN</strong>. These are static asset requests;
+        no account data is transmitted to them.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Data Retention</div>
+      <p>
+        Your data is retained for as long as your account exists.
+        If you wish to delete your account and all associated data, contact us at
+        <a class="contact-link" href="mailto:support@smokefreetimer.com">support@smokefreetimer.com</a>
+        and we will permanently delete your account, sessions, and friend connections
+        within 30 days.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Children's Privacy</div>
+      <p>
+        Smoke Free is not directed at children under the age of 13. We do not
+        knowingly collect personal information from children. If you believe a
+        child has provided us with personal information, contact us and we will
+        delete it promptly.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Your Rights</div>
+      <p>
+        You have the right to access, correct, or request deletion of your
+        personal data at any time. To exercise any of these rights, contact us at
+        <a class="contact-link" href="mailto:support@smokefreetimer.com">support@smokefreetimer.com</a>.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="section-title">Changes to This Policy</div>
+      <p>
+        If we make material changes to this privacy policy, we will update the
+        effective date at the top of this page. Continued use of the app after
+        changes are posted constitutes your acceptance of the updated policy.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <span>© 2026 Smoke Free</span>
+  <span>·</span>
+  <a href="about.html">About</a>
+  <span>·</span>
+  <a href="privacy.html">Privacy</a>
+  <span>·</span>
+  <a href="index.html">Sign In</a>
+</footer>
+
+</body>
+</html>

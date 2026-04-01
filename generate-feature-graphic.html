@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Feature Graphic Generator — Smoke Free</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  body { background:#080808; color:#e0e0e0; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:24px; padding:40px 20px; }
+  canvas { border:1px solid #282828; border-radius:4px; max-width:100%; }
+  button { background:#c8f560; color:#080808; border:none; padding:12px 28px; font-family:monospace; font-size:13px; font-weight:bold; border-radius:2px; cursor:pointer; letter-spacing:2px; }
+  button:hover { opacity:0.85; }
+  h2 { color:#c8f560; font-size:13px; letter-spacing:4px; text-transform:uppercase; margin-bottom:0; }
+  p  { color:#666; font-size:11px; letter-spacing:1px; margin-top:4px; text-align:center; }
+  #fa-preload { position:fixed; opacity:0; font-family:"Font Awesome 6 Free"; font-weight:900; font-size:64px; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<span id="fa-preload">&#xf54d;</span>
+
+<h2>Smoke Free — Feature Graphic Generator</h2>
+<p>1024 × 500 px · Open in Chrome · wait for render · then download</p>
+
+<canvas id="fg" width="1024" height="500"></canvas>
+<button onclick="download()">Download feature-graphic.png</button>
+
+<script>
+function draw() {
+  const canvas = document.getElementById('fg');
+  const ctx = canvas.getContext('2d');
+  const W = 1024, H = 500;
+
+  // Background
+  ctx.fillStyle = '#080808';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle noise-like grid lines
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Accent glow circle (left side icon area)
+  const grd = ctx.createRadialGradient(220, 250, 0, 220, 250, 220);
+  grd.addColorStop(0, 'rgba(200,245,96,0.08)');
+  grd.addColorStop(1, 'rgba(200,245,96,0)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  // Dark circle behind icon
+  ctx.fillStyle = '#111111';
+  ctx.beginPath();
+  ctx.arc(220, 250, 140, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Thin accent ring
+  ctx.strokeStyle = 'rgba(200,245,96,0.25)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(220, 250, 142, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Ban-smoking icon
+  ctx.fillStyle = '#c8f560';
+  ctx.font = '900 168px "Font Awesome 6 Free"';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('\uf54d', 220, 258);
+
+  // App name
+  ctx.font = '110px "Bebas Neue"';
+  ctx.fillStyle = '#f0f0f0';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.letterSpacing = '8px';
+  ctx.fillText('SMOKE FREE', 430, 260);
+
+  // Tagline
+  ctx.font = '400 18px "DM Mono"';
+  ctx.fillStyle = '#c8f560';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('TRACK YOUR RESISTANCE', 432, 302);
+
+  // Divider line
+  ctx.strokeStyle = 'rgba(200,245,96,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(430, 325);
+  ctx.lineTo(930, 325);
+  ctx.stroke();
+
+  // Feature tags
+  const tags = ['SESSIONS', 'FRIENDS', 'LEADERBOARD'];
+  ctx.font = '400 12px "DM Mono"';
+  ctx.fillStyle = '#666';
+  ctx.letterSpacing = '2px';
+  let tx = 432;
+  tags.forEach((tag, i) => {
+    if (i > 0) {
+      ctx.fillStyle = '#333';
+      ctx.fillText('·', tx, 360);
+      tx += 22;
+    }
+    ctx.fillStyle = '#888';
+    ctx.fillText(tag, tx, 360);
+    tx += ctx.measureText(tag).width + 22;
+  });
+
+  // Bottom accent bar
+  const barGrd = ctx.createLinearGradient(0, H - 3, W, H - 3);
+  barGrd.addColorStop(0, 'transparent');
+  barGrd.addColorStop(0.3, '#c8f560');
+  barGrd.addColorStop(0.7, '#c8f560');
+  barGrd.addColorStop(1, 'transparent');
+  ctx.fillStyle = barGrd;
+  ctx.fillRect(0, H - 3, W, 3);
+}
+
+function download() {
+  const a = document.createElement('a');
+  a.download = 'feature-graphic.png';
+  a.href = document.getElementById('fg').toDataURL('image/png');
+  a.click();
+}
+
+Promise.all([
+  document.fonts.load('900 64px "Font Awesome 6 Free"'),
+  document.fonts.load('400 64px "Bebas Neue"'),
+  document.fonts.load('400 18px "DM Mono"')
+]).then(draw).catch(() => setTimeout(draw, 2500));
+</script>
+</body>
+</html>

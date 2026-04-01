@@ -325,9 +325,15 @@ const TESTERS = new Set([
   'bhargavsanskar07@gmail.com','niharika.sarma00@gmail.com','shrikanthhiremath46@gmail.com'
 ]);
 function updatePlayBanner(email) {
-  if (!email || !TESTERS.has(email.toLowerCase())) return;
-  document.getElementById('playBannerText').innerHTML =
-    'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
+  const el = document.getElementById('playBannerText');
+  if (!el || !email || !TESTERS.has(email.toLowerCase())) return;
+  const isTWA = document.referrer.startsWith('android-app://com.smokefreetimer.app');
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isTWA) {
+    el.textContent = 'You are a tester for this app. Thanks for helping!';
+  } else if (!isIOS) {
+    el.innerHTML = 'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
+  }
 }
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session?.user) updatePlayBanner(session.user.email);

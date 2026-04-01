@@ -63,6 +63,9 @@
   .play-banner svg { flex-shrink:0; color:unset; }
   .play-banner a { color:var(--accent); text-decoration:none; font-weight:500; }
   .play-banner a:hover { text-decoration:underline; }
+  .tester-cta { display:none; text-align:center; margin-top:8px; }
+  .tester-cta a { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted2); text-decoration:none; border-bottom:1px solid var(--border2); padding-bottom:1px; transition:color 0.2s; }
+  .tester-cta a:hover { color:var(--accent); }
 
   /* Timer */
   .timer-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:36px 28px 28px; text-align:center; position:relative; margin-bottom:24px; }
@@ -489,13 +492,19 @@ const TESTERS = new Set([
 ]);
 function updatePlayBanner(email) {
   const el = document.getElementById('playBannerText');
-  if (!el || !email || !TESTERS.has(email.toLowerCase())) return;
+  const cta = document.getElementById('testerCta');
   const isTWA = document.referrer.startsWith('android-app://com.smokefreetimer.app');
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  if (isTWA) {
-    el.textContent = 'You are a tester for this app. Thanks for helping!';
-  } else if (!isIOS) {
-    el.innerHTML = 'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
+  const isAndroid = /Android/.test(navigator.userAgent);
+  const isTester = el && email && TESTERS.has(email.toLowerCase());
+  if (isTester) {
+    if (isTWA) {
+      el.textContent = 'You are a tester for this app. Thanks for helping!';
+    } else if (!isIOS) {
+      el.innerHTML = 'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
+    }
+  } else if (cta && isAndroid && !isTWA) {
+    cta.style.display = 'block';
   }
 }
 
@@ -1248,6 +1257,9 @@ document.fonts.ready.then(() => {
 <div class="play-banner" id="playBanner">
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M.5 1.05C.19 1.4 0 1.94 0 2.64v18.72c0 .7.19 1.24.5 1.59l.08.08 10.49-10.49v-.25L.58.97z"/><path fill="#34A853" d="M3.18.24l10.75 9.77-2.9 2.9L.23.41A2 2 0 0 1 3.18.24z"/><path fill="#FBBC04" d="M16.52 14.53l-3.49-3.49V10.8l3.49-3.49 3.95 2.28c1.13.64 1.13 1.69 0 2.34z"/><path fill="#EA4335" d="M3.18 23.76a2 2 0 0 0 2.05-.17l11.6-6.7-2.9-2.9z"/></svg>
   <span id="playBannerText">Coming soon to Google Play</span>
+</div>
+<div class="tester-cta" id="testerCta">
+  <a href="mailto:support@smokefreetimer.com?subject=Tester%20Request&body=Hi%2C%20I%27d%20like%20to%20become%20a%20tester%20for%20Smoke%20Free%20on%20Android." target="_blank">Become a tester →</a>
 </div>
 <footer class="site-footer">
   <span>© 2026 Smoke Free</span>

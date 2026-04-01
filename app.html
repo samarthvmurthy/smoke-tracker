@@ -493,9 +493,10 @@ const TESTERS = new Set([
 function updatePlayBanner(email) {
   const el = document.getElementById('playBannerText');
   const cta = document.getElementById('testerCta');
-  const isTWA = document.referrer.startsWith('android-app://com.smokefreetimer.app');
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isAndroid = /Android/.test(navigator.userAgent);
+  const isTWA = isInstalled && isAndroid;
   const isTester = el && email && TESTERS.has(email.toLowerCase());
   if (isTester) {
     if (isTWA) {

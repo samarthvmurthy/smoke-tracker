@@ -61,6 +61,8 @@
     color:var(--accent); width:100%; max-width:360px; margin:24px auto 0; justify-content:center;
   }
   .play-banner svg { flex-shrink:0; color:unset; }
+  .play-banner a { color:var(--accent); text-decoration:none; font-weight:500; }
+  .play-banner a:hover { text-decoration:underline; }
 
   /* Timer */
   .timer-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:36px 28px 28px; text-align:center; position:relative; margin-bottom:24px; }
@@ -479,8 +481,21 @@ sb.auth.onAuthStateChange((event, session) => {
 });
 
 // ── Bootstrap: pull everything from DB ──
+const TESTERS = new Set([
+  'svenkate2@stevens.edu','shrikantachandni@gmail.com','karthikashok123@gmail.com',
+  'vishakha14kashyap@gmail.com','prashanthrocks05@gmail.com','neerajprabhu15@gmail.com',
+  'samarthvmurthy@gmail.com','harsha1803hn@gmail.com','samarthvenkateshmurthy@gmail.com',
+  'bhargavsanskar07@gmail.com','niharika.sarma00@gmail.com','shrikanthhiremath46@gmail.com'
+]);
+function updatePlayBanner(email) {
+  if (!email || !TESTERS.has(email.toLowerCase())) return;
+  document.getElementById('playBannerText').innerHTML =
+    'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
+}
+
 async function bootstrap(user) {
   _user = user;
+  updatePlayBanner(user.email);
   try {
     const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
     _profile = profile;
@@ -1224,9 +1239,9 @@ document.fonts.ready.then(() => {
 });
 </script>
 
-<div class="play-banner">
+<div class="play-banner" id="playBanner">
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M.5 1.05C.19 1.4 0 1.94 0 2.64v18.72c0 .7.19 1.24.5 1.59l.08.08 10.49-10.49v-.25L.58.97z"/><path fill="#34A853" d="M3.18.24l10.75 9.77-2.9 2.9L.23.41A2 2 0 0 1 3.18.24z"/><path fill="#FBBC04" d="M16.52 14.53l-3.49-3.49V10.8l3.49-3.49 3.95 2.28c1.13.64 1.13 1.69 0 2.34z"/><path fill="#EA4335" d="M3.18 23.76a2 2 0 0 0 2.05-.17l11.6-6.7-2.9-2.9z"/></svg>
-  Coming soon to Google Play
+  <span id="playBannerText">Coming soon to Google Play</span>
 </div>
 <footer class="site-footer">
   <span>© 2026 Smoke Free</span>

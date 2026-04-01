@@ -488,14 +488,14 @@ const TESTERS = new Set([
   'bhargavsanskar07@gmail.com','niharika.sarma00@gmail.com','shrikanthhiremath46@gmail.com'
 ]);
 function updatePlayBanner(email) {
-  if (!email || !TESTERS.has(email.toLowerCase())) return;
-  document.getElementById('playBannerText').innerHTML =
-    'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
+  const el = document.getElementById('playBannerText');
+  if (!el || !email || !TESTERS.has(email.toLowerCase())) return;
+  el.innerHTML = 'You have early access! <a href="https://play.google.com/apps/testing/com.smokefreetimer.app" target="_blank" rel="noopener">Download on Google Play →</a>';
 }
 
 async function bootstrap(user) {
   _user = user;
-  updatePlayBanner(user.email);
+  setTimeout(() => updatePlayBanner(user.email), 0);
   try {
     const { data:profile } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
     _profile = profile;

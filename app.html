@@ -811,7 +811,8 @@ async function sendFriendRequest() {
 }
 
 async function acceptRequest(id) {
-  await sb.from('friendships').update({ status:'accepted' }).eq('id', id);
+  const { error } = await sb.from('friendships').update({ status:'accepted' }).eq('id', id).eq('friend_id', _user.id);
+  if (error) { console.error('acceptRequest failed:', error); return; }
   _friendsCache.ts = 0; _lbCache.ts = 0;
   await loadFriends(true);
 }
@@ -878,7 +879,7 @@ function _renderFriends({ incoming, fids, profileMap, sessionMap }) {
 
   const incomingSec = document.getElementById('incomingSection');
   const badge       = document.getElementById('reqBadge');
-  const enriched    = incoming.map(r => ({ ...r, ...profileMap[r.user_id] })).filter(r => r.username);
+  const enriched    = incoming.map(r => { const { id: _pid, ...prof } = profileMap[r.user_id] || {}; return { ...r, ...prof }; }).filter(r => r.username);
 
   if (enriched.length > 0) {
     incomingSec.style.display='block'; badge.style.display='inline';
